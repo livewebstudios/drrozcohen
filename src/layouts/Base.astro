@@ -1,0 +1,98 @@
+---
+import '@fontsource/montserrat/latin-600.css';
+import '@fontsource/montserrat/latin-700.css';
+import '@fontsource-variable/open-sans/wght.css';
+import '@fontsource-variable/open-sans/wght-italic.css';
+import '../styles/global.css';
+import '../styles/islands.css';
+import headingFont from '@fontsource/montserrat/files/montserrat-latin-700-normal.woff2?url';
+import { token } from '../lib/tokens';
+import SEO from '../components/SEO.astro';
+import Schema from '../components/Schema.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  /** Path used for the canonical URL, e.g. "/about/". Defaults to the current path. */
+  path?: string;
+  /** Absolute or root-relative OG image URL (1200x630). */
+  ogImage: string;
+  ogAlt?: string;
+  type?: 'website' | 'article' | 'profile';
+  publishedTime?: string;
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description,
+  path = Astro.url.pathname,
+  ogImage,
+  ogAlt,
+  type,
+  publishedTime,
+  schema = [],
+  noindex,
+  bodyClass = '',
+} = Astro.props;
+const ga4 = import.meta.env.PUBLIC_GA4_ID;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      // Netlify Identity invite and recovery links land on the home page; hand them to /admin/.
+      if (/(invite|recovery|confirmation|email_change)_token=/.test(location.hash) && !location.pathname.startsWith('/admin')) {
+        location.replace('/admin/' + location.hash);
+      }
+    </script>
+    <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
+    <SEO {title} {description} {path} {ogImage} {ogAlt} {type} {publishedTime} {noindex} />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content={token('plum')} />
+    <link rel="alternate" type="application/rss+xml" title="Dr. Roz Cohen: Leadership, Culture, & Food" href="/rss.xml" />
+    <slot name="head" />
+    <Schema nodes={schema} />
+    <!-- GA4: G-XXXXXXXXXX -->
+    {
+      ga4 && (
+        <>
+          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ga4}`} />
+          <script is:inline define:vars={{ ga4 }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', ga4);
+          </script>
+        </>
+      )
+    }
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">SKIP TO CONTENT</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '../scripts/chrome';
+      // GSAP motion loads after first paint so it never competes with the hero image.
+      const loadMotion = () => import('../scripts/motion');
+      if ('requestIdleCallback' in window) requestIdleCallback(loadMotion, { timeout: 1500 });
+      else setTimeout(loadMotion, 200);
+    </script>
+  </body>
+</html>

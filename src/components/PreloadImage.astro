@@ -1,0 +1,31 @@
+---
+/**
+ * <link rel="preload"> for a page's LCP image. The transform options must match the
+ * <Picture> that renders it (ArchFrame or the post hero) so the browser reuses the file.
+ * Use it with slot="head" on <Base>.
+ */
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+export interface Props {
+  src: ImageMetadata;
+  widths: number[];
+  sizes: string;
+  quality: number;
+  layout?: 'full-width' | 'constrained';
+}
+const { src, widths, sizes, quality, layout = 'full-width' } = Astro.props;
+const usable = widths.filter((w) => w <= src.width);
+const img = await getImage({
+  src,
+  format: 'avif',
+  layout,
+  fit: 'cover',
+  position: 'center',
+  quality,
+  widths: usable.length ? usable : [src.width],
+  sizes,
+});
+---
+
+<link rel="preload" as="image" type="image/avif" imagesrcset={img.srcSet.attribute} imagesizes={sizes} fetchpriority="high" />

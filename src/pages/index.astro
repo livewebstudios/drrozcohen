@@ -1,0 +1,582 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import ArchFrame from '../components/ArchFrame.astro';
+import ArchMotif from '../components/ArchMotif.astro';
+import ArchDivider from '../components/ArchDivider.astro';
+import LogoRow from '../components/LogoRow.astro';
+import Threads from '../components/Threads.astro';
+import ContactForm from '../islands/ContactForm';
+import { LOGOS } from '../data/site';
+import { FORMSPREE_ID, THANKS_URL } from '../lib/env';
+import { ogPath } from '../lib/og-path';
+import { breadcrumbs } from '../lib/schema';
+import { hero, featuredIn, focusWords, collaborate, quote, values, tagline, cta, meta } from '../data/pages/home';
+
+import heroImg from '../assets/images/photos/roscohen_164.jpg';
+import hands from '../assets/images/photos/hands.jpg';
+import centralPark from '../assets/images/photos/central_park.jpg';
+import roz172 from '../assets/images/photos/roscohen_172.jpg';
+
+const HERO_SIZES = '(min-width: 1024px) 40vw, (min-width: 640px) 70vw, 92vw';
+const HERO_WIDTHS = [400, 640, 720, 960, 1280, 1600];
+const preload = await getImage({
+  src: heroImg,
+  format: 'avif',
+  layout: 'full-width',
+  fit: 'cover',
+  position: 'center',
+  quality: 72,
+  widths: HERO_WIDTHS,
+  sizes: HERO_SIZES,
+});
+
+const serviceImages = [
+  { src: hands, alt: 'Hands of many people stacked together in the center of a circle', focus: '50 55' },
+  { src: centralPark, alt: 'A tree lined path winding through a green park at dusk', focus: '50 60' },
+  { src: roz172, alt: 'Dr. Roz Cohen smiling outdoors among autumn plants in a magenta scarf', focus: '45 40' },
+];
+
+const schema = [
+  {
+    '@type': 'WebPage',
+    '@id': 'https://drrozcohen.com/#webpage',
+    url: 'https://drrozcohen.com/',
+    name: meta.title,
+    description: meta.description,
+    isPartOf: { '@id': 'https://drrozcohen.com/#website' },
+    about: { '@id': 'https://drrozcohen.com/#socius' },
+  },
+  breadcrumbs([{ name: 'Home', path: '/' }]),
+];
+---
+
+<Base title={meta.title} description={meta.description} path="/" ogImage={ogPath('home')} schema={schema} bodyClass="page-home">
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    type="image/avif"
+    imagesrcset={preload.srcSet.attribute}
+    imagesizes={HERO_SIZES}
+    fetchpriority="high"
+  />
+
+  <!-- 1. Hero -->
+  <section class="hero" data-hero aria-labelledby="home-title">
+    <Threads variant="light" seed={11} parallax={0.4} />
+    <div class="hero__objects" data-parallax="0.7" aria-hidden="true">
+      <ArchMotif variant="full" tone="orchid" drift phase={0} class="hero__arch hero__arch--a" />
+      <ArchMotif variant="arc" tone="slate" drift phase={2} class="hero__arch hero__arch--b" />
+    </div>
+    <div class="container hero__grid">
+      <div class="hero__text">
+        <p class="eyebrow hero__eyebrow">{hero.eyebrow}</p>
+        <h1 id="home-title" class="hero__title fade-in">{hero.title}</h1>
+        <p class="hero__sub">{hero.sub}</p>
+        <div class="hero__actions">
+          <Button href="/contact-us/">GET IN TOUCH</Button>
+        </div>
+      </div>
+      <div class="hero__portrait" data-parallax="0.85">
+        <ArchFrame
+          src={heroImg}
+          alt="Dr. Roz Cohen standing on a San Francisco rooftop garden among city towers"
+          shape="tall"
+          sizes={HERO_SIZES}
+          widths={HERO_WIDTHS}
+          focus="55 50"
+          priority
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. As Featured In -->
+  <Section class="featured" flush>
+    <div class="container featured__inner">
+      <LogoRow label={featuredIn.label} logos={LOGOS.featured} id="featured-in" />
+    </div>
+  </Section>
+
+  <!-- 3. Focus band -->
+  <section class="focus on-dark" aria-label="Focus" data-focus-band>
+    <Threads variant="dark" seed={23} density={0.8} />
+    <div class="container focus__inner">
+      <svg class="focus__line" viewBox="0 0 1200 160" preserveAspectRatio="none" fill="none" aria-hidden="true" focusable="false">
+        <path d="M10 150C220 40 420 14 600 12C780 14 980 40 1190 150" pathLength="1" data-focus-line vector-effect="non-scaling-stroke" />
+      </svg>
+      <ul class="focus__words" role="list">
+        {focusWords.map((w) => <li class="focus__word" data-focus-word>{w}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. How We Collaborate -->
+  <Section class="collab" labelledby="collab-title">
+    <div class="container collab__grid">
+      <div class="collab__head">
+        <h2 id="collab-title" class="collab__title" data-reveal>{collaborate.title}</h2>
+      </div>
+      <ol class="collab__rows" role="list">
+        {
+          collaborate.items.map((item, i) => (
+            <li class="collab__row" data-reveal-group>
+              <div class="collab__media" data-reveal>
+                <ArchFrame
+                  src={serviceImages[i].src}
+                  alt={serviceImages[i].alt}
+                  shape="top"
+                  sizes="(min-width: 1024px) 26vw, (min-width: 640px) 60vw, 92vw"
+                  widths={[400, 640, 960]}
+                  focus={serviceImages[i].focus}
+                  quality={58}
+                  parallax
+                />
+              </div>
+              <div class="collab__copy">
+                <span class="collab__num" aria-hidden="true" data-reveal>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 class="collab__h3" data-reveal>{item.title}</h3>
+                <p data-reveal>{item.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
+  <!-- 5. Quote band -->
+  <section class="quote on-dark" aria-label="Quote">
+    <Threads variant="dark" seed={37} density={0.7} />
+    <ArchMotif variant="arches" tone="light" drift phase={1} class="quote__arch" />
+    <div class="container container--narrow">
+      <figure class="quote__figure">
+        <blockquote class="quote__text">
+          <p data-word-scrub>“{quote.text}”</p>
+        </blockquote>
+        <figcaption class="quote__cite script">{quote.cite}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6. Core Values -->
+  <Section class="values" labelledby="values-title" tone="blush">
+    <div class="container">
+      <header class="values__head" data-reveal-group>
+        <h2 id="values-title" data-reveal>{values.title}</h2>
+        <p class="values__intro" data-reveal>{values.intro}</p>
+      </header>
+      <ul class="values__grid" role="list" data-reveal-group>
+        {
+          values.items.map((v) => (
+            <li class="value" data-reveal>
+              <span class="value__num" data-parallax="0.75" aria-hidden="true">{v.num}</span>
+              <div class="value__body">
+                <h3 class="value__title">{v.title}</h3>
+                <p>{v.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <!-- 7. Tagline -->
+  <Section class="tagline" labelledby="tagline-text">
+    <div class="container tagline__inner" data-draw-trigger>
+      <p id="tagline-text" class="tagline__text">{tagline}</p>
+      <svg class="tagline__line" viewBox="0 0 1000 90" fill="none" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path
+          d="M8 62C70 70 120 30 190 38S300 78 380 60 500 16 590 32 700 76 790 58 900 22 992 40"
+          pathLength="1"
+          data-draw="scrub"
+          vector-effect="non-scaling-stroke"
+        />
+        <circle cx="8" cy="62" r="5" />
+        <circle cx="992" cy="40" r="5" />
+      </svg>
+    </div>
+  </Section>
+
+  <ArchDivider tone="orchid" />
+
+  <!-- 8. Collaborate CTA + form -->
+  <Section class="home-cta" labelledby="home-cta-title">
+    <div class="container home-cta__grid">
+      <div class="home-cta__copy" data-reveal-group>
+        <h2 id="home-cta-title" class="eyebrow home-cta__eyebrow" data-reveal>{cta.eyebrow}</h2>
+        <p class="home-cta__lead" data-reveal>{cta.body}</p>
+        <ArchMotif variant="full" tone="plum" class="home-cta__arch" />
+      </div>
+      <div class="home-cta__form" data-reveal>
+        <ContactForm client:visible formId={FORMSPREE_ID} idPrefix="home" thanksUrl={THANKS_URL} />
+      </div>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-top: calc(var(--header-h) + var(--s-6));
+    padding-bottom: var(--s-9);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--blush) 100%);
+  }
+  .hero :global(.threads-bg) {
+    z-index: -2;
+  }
+  .hero__objects {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .hero :global(.hero__arch--a) {
+    position: absolute;
+    width: clamp(220px, 34vw, 520px);
+    left: -6%;
+    bottom: 6%;
+  }
+  .hero :global(.hero__arch--b) {
+    position: absolute;
+    width: clamp(160px, 22vw, 340px);
+    right: 4%;
+    top: calc(var(--header-h) + 2%);
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--s-7);
+    align-items: center;
+  }
+  .hero__eyebrow {
+    margin-bottom: var(--s-5);
+    color: var(--slate);
+  }
+  .hero__title {
+    max-width: 14ch;
+    font-size: var(--fs-h1);
+  }
+  .hero__sub {
+    margin-top: var(--s-5);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-lg);
+    letter-spacing: var(--track-snug);
+    color: var(--ink);
+  }
+  .hero__actions {
+    margin-top: var(--s-6);
+  }
+  .hero__portrait {
+    width: min(100%, 460px);
+    justify-self: center;
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      min-height: min(100svh, 980px);
+      display: flex;
+      align-items: center;
+      padding-bottom: var(--s-8);
+    }
+    .hero__grid {
+      grid-template-columns: 55fr 45fr;
+      gap: var(--s-8);
+    }
+    .hero__portrait {
+      justify-self: end;
+      width: min(100%, 480px);
+    }
+  }
+
+  /* ---------- Featured In ---------- */
+  .featured__inner {
+    padding-block: var(--s-7);
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ---------- Focus band ---------- */
+  .focus {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-block: var(--band-y);
+  }
+  .focus :global(.threads-bg) {
+    z-index: -1;
+  }
+  .focus__inner {
+    position: relative;
+  }
+  .focus__line {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    top: 50%;
+    width: calc(100% - var(--gutter) * 2);
+    height: 120%;
+    transform: translateY(-50%);
+    stroke: var(--orchid-soft);
+    stroke-width: 1px;
+    opacity: 0.6;
+  }
+  .focus__words {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-6) var(--s-5);
+    text-align: center;
+  }
+  .focus__word {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 0.3rem + 2.2vw, 2.75rem);
+    letter-spacing: 0.03em;
+    color: var(--on-dark);
+  }
+  @media (min-width: 1024px) {
+    .focus__words {
+      grid-template-columns: repeat(4, auto);
+      justify-content: space-between;
+    }
+  }
+
+  /* ---------- How We Collaborate ---------- */
+  .collab__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .collab__title {
+    max-width: 16ch;
+  }
+  .collab__rows {
+    display: grid;
+  }
+  .collab__row {
+    display: grid;
+    gap: var(--s-5);
+    padding-block: var(--s-7);
+    border-top: 1px solid var(--line);
+  }
+  .collab__row:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .collab__media {
+    width: 100%;
+  }
+  .collab__num {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: var(--track-eyebrow);
+    color: var(--slate);
+    margin-bottom: var(--s-3);
+  }
+  .collab__h3 {
+    margin-bottom: var(--s-4);
+  }
+  .collab__copy p {
+    max-width: 52ch;
+  }
+  @media (min-width: 1024px) {
+    .collab__grid {
+      grid-template-columns: 4fr 8fr;
+      gap: var(--s-8);
+      align-items: start;
+    }
+    .collab__head {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-6));
+    }
+    .collab__row {
+      padding-block: var(--s-8);
+    }
+  }
+  @media (min-width: 1280px) {
+    .collab__row {
+      grid-template-columns: 5fr 6fr;
+      gap: var(--s-7);
+      align-items: center;
+    }
+    .collab__row:nth-child(even) .collab__media {
+      order: 2;
+    }
+  }
+
+  /* ---------- Quote band ---------- */
+  .quote {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-block: var(--band-y-lg);
+  }
+  .quote :global(.threads-bg) {
+    z-index: -1;
+  }
+  .quote :global(.quote__arch) {
+    position: absolute;
+    z-index: -1;
+    width: clamp(260px, 40vw, 620px);
+    right: -8%;
+    bottom: -10%;
+  }
+  .quote__figure {
+    text-align: center;
+  }
+  .quote__text p {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-display);
+    line-height: 1.22;
+    letter-spacing: var(--track-snug);
+    color: var(--on-dark);
+    text-wrap: balance;
+  }
+  .quote__cite {
+    margin-top: var(--s-6);
+    font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
+    line-height: 1.1;
+    color: var(--orchid-soft);
+  }
+
+  /* ---------- Core values ---------- */
+  .values__head {
+    display: grid;
+    gap: var(--s-5);
+    margin-bottom: var(--s-8);
+  }
+  .values__intro {
+    max-width: 62ch;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+    letter-spacing: var(--track-eyebrow);
+    color: var(--slate);
+  }
+  .values__grid {
+    display: grid;
+    gap: var(--s-9) var(--s-8);
+    margin-top: var(--s-6);
+  }
+  .value {
+    position: relative;
+    padding-top: var(--numeral-room);
+  }
+  .value__num {
+    position: absolute;
+    top: -0.1em;
+    left: -0.04em;
+    z-index: 0;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(5.5rem, 3rem + 6vw, 9rem);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--plum);
+    opacity: 0.26;
+    user-select: none;
+  }
+  .value__body {
+    position: relative;
+    z-index: 1;
+  }
+  .value__title {
+    margin-bottom: var(--s-4);
+  }
+  .value__body p {
+    max-width: 56ch;
+  }
+  @media (min-width: 768px) {
+    .values__head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+    .values__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .value:nth-child(even) {
+      margin-top: var(--s-8);
+    }
+  }
+
+  /* ---------- Tagline ---------- */
+  .tagline__inner {
+    position: relative;
+  }
+  .tagline__text {
+    max-width: 22ch;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: var(--fs-mega);
+    line-height: 1.06;
+    letter-spacing: var(--track-tight);
+    color: var(--plum);
+    text-wrap: balance;
+  }
+  .tagline__line {
+    width: 100%;
+    height: clamp(40px, 6vw, 90px);
+    margin-top: var(--s-5);
+    overflow: visible;
+    stroke: var(--orchid);
+    stroke-width: 2px;
+    stroke-linecap: round;
+  }
+  .tagline__line circle {
+    fill: var(--plum);
+    stroke: none;
+  }
+
+  /* ---------- CTA + form ---------- */
+  .home-cta__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .home-cta__eyebrow {
+    margin-bottom: var(--s-5);
+    color: var(--plum);
+  }
+  .home-cta__lead {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-h3);
+    line-height: 1.3;
+    letter-spacing: var(--track-snug);
+    color: var(--ink);
+    max-width: 24ch;
+  }
+  .home-cta :global(.home-cta__arch) {
+    display: none;
+  }
+  .home-cta__form {
+    padding: clamp(var(--s-5), 4vw, var(--s-7));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-1);
+  }
+  @media (min-width: 1024px) {
+    .home-cta__grid {
+      grid-template-columns: 5fr 7fr;
+      gap: var(--s-8);
+      align-items: start;
+    }
+    .home-cta :global(.home-cta__arch) {
+      display: block;
+      width: 78%;
+      margin-top: var(--s-8);
+    }
+  }
+</style>

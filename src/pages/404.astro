@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+import ArchMotif from '../components/ArchMotif.astro';
+import { ogPath } from '../lib/og-path';
+
+const title = 'Page not found | Dr. Roz Cohen of Socius Strategies';
+const description =
+  'The page you were looking for has moved or no longer exists. Head back to the home page or the blog from Dr. Roz Cohen of Socius Strategies.';
+---
+
+<Base {title} {description} path="/404/" ogImage={ogPath('404')} noindex>
+  <section class="nf" aria-labelledby="nf-title">
+    <ArchMotif variant="full" tone="orchid" drift phase={0} class="nf__arch nf__arch--a" />
+    <ArchMotif variant="arc" tone="slate" drift phase={2} class="nf__arch nf__arch--b" />
+    <div class="container nf__inner">
+      <h1 id="nf-title" class="fade-in">Page not found.</h1>
+      <p class="nf__text">The page you were looking for has moved or no longer exists.</p>
+      <ul class="nf__links" role="list">
+        <li><a class="btn btn--solid" href="/">HOME</a></li>
+        <li><a class="btn btn--outline" href="/blog/">BLOG</a></li>
+        <li><a class="btn btn--outline" href="/contact-us/">CONTACT</a></li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: min(100svh, 860px);
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--header-h) + var(--s-7));
+    padding-bottom: var(--s-9);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--blush) 100%);
+  }
+  .nf :global(.nf__arch) {
+    position: absolute;
+    z-index: -1;
+  }
+  .nf :global(.nf__arch--a) {
+    width: clamp(260px, 42vw, 640px);
+    right: -6%;
+    bottom: 6%;
+  }
+  .nf :global(.nf__arch--b) {
+    width: clamp(160px, 22vw, 320px);
+    left: 4%;
+    top: calc(var(--header-h) + 6%);
+  }
+  .nf__inner {
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+  }
+  .nf__text {
+    max-width: 44ch;
+    font-size: var(--fs-lg);
+  }
+  .nf__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-4);
+  }
+</style>

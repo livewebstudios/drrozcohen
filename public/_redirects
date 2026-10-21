@@ -1,0 +1,25 @@
+# DrRozCohen.com: WordPress URLs to the Astro rebuild. Every live URL is built or redirected (see URL_AUDIT.md).
+/contact                         /contact-us/          301
+/contact/                        /contact-us/          301
+/feed                            /rss.xml              301
+/feed/                           /rss.xml              301
+/blog/feed/                      /rss.xml              301
+/comments/feed/                  /rss.xml              301
+/wp-admin/*                      /                     301
+/wp-login.php                    /                     301
+/author/*                        /about/               301
+/category/uncategorized/         /blog/                301
+/category/uncategorized/*        /blog/                301
+/category/:cat/feed/             /rss.xml              301
+/category/:cat/page/*            /category/:cat/       301
+/tag/*                           /blog/                301
+/culture-readiness-diagnostic/   /contact-us/          301
+/culture-readiness-diagnostic    /contact-us/          301
+/project/*                       /                     301
+/project_category/*              /                     301
+/home/                           /                     301
+/:year/:month/:day/:slug/feed/   /:year/:month/:day/:slug/   301
+/:year/:month/:day/:slug/amp/    /:year/:month/:day/:slug/   301
+/:year/:month/:day/:slug/*       /:year/:month/:day/:slug/   301
+/wp-sitemap.xml                  /sitemap-index.xml    301
+/sitemap.xml                     /sitemap-index.xml    301

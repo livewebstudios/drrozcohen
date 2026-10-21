@@ -1,0 +1,22 @@
+---
+import { getImage } from 'astro:assets';
+import { siteGraph, abs } from '../lib/schema';
+import logo from '../assets/images/brand/logoRGB.png';
+import portrait from '../assets/images/photos/roscohen_86.jpg';
+
+export interface Props {
+  /** Page-specific JSON-LD nodes (without @context); merged into one @graph with the site nodes. */
+  nodes?: Record<string, unknown>[];
+}
+
+const { nodes = [] } = Astro.props;
+const logoImg = await getImage({ src: logo, format: 'png', width: 660 });
+const portraitImg = await getImage({ src: portrait, format: 'jpg', width: 800 });
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [...siteGraph({ logo: abs(logoImg.src), portrait: abs(portraitImg.src) }), ...nodes],
+};
+const json = JSON.stringify(graph).replace(/</g, '\\u003c');
+---
+
+<script is:inline type="application/ld+json" set:html={json} />

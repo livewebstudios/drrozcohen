@@ -1,0 +1,64 @@
+# Decap CMS: blog posts only. Jon manages all page edits in code.
+# Decap is pinned to 3.1.2 in admin/index.html (later versions crash on empty image fields).
+backend:
+  name: git-gateway
+  branch: main
+
+site_url: https://drrozcohen.com
+display_url: https://drrozcohen.com
+logo_url: https://drrozcohen.com/icon-192.png
+
+# Images uploaded in the CMS are committed next to the other blog images and processed by Astro.
+media_folder: src/assets/images/blog
+public_folder: ../../assets/images/blog
+
+collections:
+  - name: blog
+    label: Blog
+    label_singular: Post
+    folder: src/content/blog
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{title}} ({{date | date('YYYY-MM-DD')}})"
+    sortable_fields: [date, title]
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+    fields:
+      - { label: Title, name: title, widget: string }
+      - label: Publish date
+        name: date
+        widget: datetime
+        format: "YYYY-MM-DDTHH:mm:ss[Z]"
+        date_format: "MMMM D, YYYY"
+        time_format: "h:mm a"
+        picker_utc: true
+      - label: URL slug
+        name: slug
+        widget: string
+        hint: "Lowercase words joined by hyphens, e.g. my-new-post. The post lives at /YYYY/MM/DD/slug/. Do not change it after publishing."
+        pattern: ["^[a-z0-9]+(?:-[a-z0-9]+)*$", "Lowercase letters, numbers and hyphens only"]
+      - label: Categories
+        name: categories
+        widget: select
+        multiple: true
+        min: 1
+        hint: "The first category you pick shows on the post card."
+        options: [Belonging, Connection, Engagement, Inclusion, Inclusive Leadership, Mentor, Organizational Trust, Unconscious Bias, Uncategorized]
+      - { label: Featured image, name: featuredImage, widget: image, required: false, choose_url: false }
+      - label: Featured image description (alt text)
+        name: featuredAlt
+        widget: string
+        required: false
+        hint: "Describe the image in 8 to 16 words for people who cannot see it."
+      - label: Excerpt
+        name: excerpt
+        widget: text
+        required: false
+        hint: "Optional. Leave empty and the first 28 words of the post are used."
+      - { label: Draft (hide from the site), name: draft, widget: boolean, default: false, required: false }
+      - { label: Body, name: body, widget: markdown }
+      - { label: Source URL, name: sourceUrl, widget: hidden, required: false }
+      - { label: LinkedIn embed, name: linkedinEmbed, widget: hidden, required: false }

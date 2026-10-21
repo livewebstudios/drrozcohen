@@ -1,0 +1,57 @@
+---
+/** Formspree `_next` target for the no-JS form post. Not in the sitemap, noindex. */
+import Base from '../layouts/Base.astro';
+import ArchMotif from '../components/ArchMotif.astro';
+import { ogPath } from '../lib/og-path';
+
+const title = 'Thanks | Dr. Roz Cohen of Socius Strategies';
+const description =
+  'Thanks. Roz will be in touch shortly. Your message reached Dr. Roz Cohen of Socius Strategies, and a reply is on the way to the email address you shared.';
+---
+
+<Base {title} {description} path="/thank-you/" ogImage={ogPath('contact-us')} noindex>
+  <section class="ty" aria-labelledby="ty-title">
+    <ArchMotif variant="full" tone="orchid" drift phase={1} class="ty__arch" />
+    <div class="container ty__inner">
+      <h1 id="ty-title" class="fade-in">Thanks. Roz will be in touch shortly.</h1>
+      <ul class="ty__links" role="list">
+        <li><a class="btn btn--solid" href="/">HOME</a></li>
+        <li><a class="btn btn--outline" href="/blog/">BLOG</a></li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ty {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: min(90svh, 760px);
+    display: flex;
+    align-items: center;
+    padding-top: calc(var(--header-h) + var(--s-7));
+    padding-bottom: var(--s-9);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--blush) 100%);
+  }
+  .ty :global(.ty__arch) {
+    position: absolute;
+    z-index: -1;
+    width: clamp(260px, 40vw, 600px);
+    right: -6%;
+    bottom: 4%;
+  }
+  .ty__inner {
+    display: grid;
+    gap: var(--s-6);
+    justify-items: start;
+  }
+  .ty h1 {
+    max-width: 18ch;
+  }
+  .ty__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+</style>

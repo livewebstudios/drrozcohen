@@ -1,0 +1,38 @@
+---
+/** A single thin arch line that draws itself (stroke-dashoffset) as it scrolls into view. */
+export interface Props {
+  tone?: 'orchid' | 'slate' | 'plum';
+  class?: string;
+}
+const { tone = 'orchid', class: cls = '' } = Astro.props;
+---
+
+<div class:list={['arch-divider', `arch-divider--${tone}`, cls]} aria-hidden="true">
+  <svg viewBox="0 0 1200 80" preserveAspectRatio="none" fill="none" focusable="false">
+    <path d="M0 79C210 30 420 6 600 4C780 6 990 30 1200 79" pathLength="1" data-draw vector-effect="non-scaling-stroke" />
+  </svg>
+</div>
+
+<style>
+  .arch-divider {
+    width: min(100% - var(--gutter) * 2, var(--container));
+    margin-inline: auto;
+    height: clamp(28px, 4vw, 56px);
+  }
+  .arch-divider svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    stroke: currentColor;
+    stroke-width: 1px;
+  }
+  .arch-divider--orchid {
+    color: var(--orchid);
+  }
+  .arch-divider--slate {
+    color: var(--slate);
+  }
+  .arch-divider--plum {
+    color: var(--plum);
+  }
+</style>

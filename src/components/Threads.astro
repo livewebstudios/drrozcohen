@@ -1,0 +1,17 @@
+---
+/** Positions the Living Threads canvas behind a section. Never affects layout. */
+import ThreadsBackground from '../islands/ThreadsBackground';
+
+export interface Props {
+  variant?: 'light' | 'dark';
+  density?: number;
+  seed?: number;
+  parallax?: number;
+  class?: string;
+}
+const { variant = 'light', density = 1, seed = 1, parallax, class: cls = '' } = Astro.props;
+---
+
+<div class:list={['threads-bg', `threads-bg--${variant}`, cls]} data-parallax={parallax} aria-hidden="true">
+  <ThreadsBackground client:idle variant={variant} density={density} seed={seed} />
+</div>

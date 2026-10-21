@@ -1,0 +1,173 @@
+---
+/** Shared listing for /blog/, /blog/page/N/ and /category/<slug>/ archives. */
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PostCard from './PostCard.astro';
+import Pagination from './Pagination.astro';
+import BlogFilter from '../islands/BlogFilter';
+import { CATEGORIES } from '../data/site';
+import { categoryPath, postPath, type Post } from '../lib/blog';
+import { breadcrumbs, ID, abs } from '../lib/schema';
+import shuk from '../assets/images/photos/shuk_-_israel.jpg';
+
+export interface Props {
+  posts: Post[];
+  page: number;
+  totalPages: number;
+  /** Listing root, e.g. "/blog/" or "/category/belonging/". */
+  base: string;
+  title: string;
+  intro?: string;
+  category?: string;
+  metaTitle: string;
+  metaDescription: string;
+  ogImage: string;
+}
+const { posts, page, totalPages, base, title, intro, category, metaTitle, metaDescription, ogImage } = Astro.props;
+const path = page === 1 ? base : `${base}page/${page}/`;
+const cats = CATEGORIES.map((c) => ({ name: c, href: categoryPath(c) }));
+const isIndex = !category;
+
+const crumbs = [
+  { name: 'Home', path: '/' },
+  { name: 'Blog', path: '/blog/' },
+  ...(category ? [{ name: category, path: base }] : []),
+  ...(page > 1 ? [{ name: `Page ${page}`, path }] : []),
+];
+const schema = [
+  {
+    '@type': isIndex ? 'Blog' : 'CollectionPage',
+    '@id': abs(`${path}#webpage`),
+    url: abs(path),
+    name: metaTitle,
+    description: metaDescription,
+    isPartOf: { '@id': ID.website },
+    publisher: { '@id': ID.org },
+    ...(isIndex ? { author: { '@id': ID.person } } : {}),
+  },
+  {
+    '@type': 'ItemList',
+    itemListElement: posts.map((p, i) => ({
+      '@type': 'ListItem',
+      position: (page - 1) * 12 + i + 1,
+      url: abs(postPath(p)),
+      name: p.data.title,
+    })),
+  },
+  breadcrumbs(crumbs),
+];
+---
+
+<Base title={metaTitle} description={metaDescription} {path} ogImage={ogImage} schema={schema} bodyClass="header-solid">
+  <section class="bhero on-dark" aria-labelledby="blog-title">
+    <Picture
+      src={shuk}
+      alt=""
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      quality={60}
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
+      layout="full-width"
+      priority={page === 1 && isIndex}
+      class="bhero__img"
+    />
+    <div class="container bhero__inner">
+      {category && <p class="eyebrow bhero__eyebrow"><a href="/blog/">BACK TO THE BLOG</a></p>}
+      <h1 id="blog-title" class="fade-in">{title}</h1>
+      {intro && <p class="bhero__intro">{intro}</p>}
+    </div>
+  </section>
+
+  <section class="blist" aria-label="Posts">
+    <div class="container">
+      <div class="blist__filter">
+        {
+          isIndex ? (
+            <BlogFilter client:visible categories={cats} allHref="/blog/" mode="filter" />
+          ) : (
+            <BlogFilter categories={cats} allHref="/blog/" current={category} mode="links" />
+          )
+        }
+      </div>
+      <div class="blist__grid" data-post-grid data-reveal-group>
+        {posts.map((post, i) => <PostCard post={post} featured={i === 0 && page === 1} eager={i < 1} headingLevel="h2" />)}
+      </div>
+      <Pagination current={page} total={totalPages} base={base} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .bhero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-top: calc(var(--header-h) + var(--s-8));
+    padding-bottom: var(--s-8);
+    background: var(--plum-deep);
+  }
+  .bhero :global(picture) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .bhero :global(.bhero__img) {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 50% 60%;
+  }
+  .bhero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--overlay-plum);
+  }
+  .bhero__inner {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .bhero__eyebrow a {
+    color: var(--on-dark-soft);
+    text-decoration: none;
+  }
+  .bhero__eyebrow a:hover {
+    color: var(--on-dark);
+    text-decoration: underline;
+  }
+  .bhero h1 {
+    max-width: 18ch;
+  }
+  .bhero__intro {
+    max-width: 58ch;
+    font-size: var(--fs-lg);
+    color: var(--on-dark);
+  }
+  .blist {
+    padding-block: var(--s-7) var(--section-y);
+  }
+  .blist__filter {
+    margin-bottom: var(--s-7);
+  }
+  .blist__grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+  @media (min-width: 640px) {
+    .blist__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .bhero {
+      padding-top: calc(var(--header-h) + var(--s-9));
+      padding-bottom: var(--s-9);
+    }
+    .blist__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

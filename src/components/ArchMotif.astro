@@ -1,0 +1,120 @@
+---
+/**
+ * Stroke-only arch motif traced from the Dr. Roz Cohen logo (the two bridge arches and
+ * three pillars). Geometry was fitted to the logo's edges (see DECISIONS.md, Phase 3).
+ * It never redraws the logo itself: no fill, no text.
+ *
+ * variant: 'full'   both arches + pillars
+ *          'arches' both arches, no pillars
+ *          'arc'    the plum arch's outer line only (used for small accents)
+ * drift:   gentle CSS float (±8px, ±2deg) on a 7 to 9 s loop; disabled under reduced motion.
+ */
+export interface Props {
+  variant?: 'full' | 'arches' | 'arc';
+  drift?: boolean;
+  /** 0 to 3, staggers the drift loop so objects move out of phase. */
+  phase?: number;
+  tone?: 'orchid' | 'slate' | 'plum' | 'light';
+  class?: string;
+  parallax?: number;
+}
+
+const { variant = 'full', drift = false, phase = 0, tone = 'orchid', class: cls = '', parallax } = Astro.props;
+
+// viewBox 0 0 525 170, origin at the logo's arch area.
+const PLUM = 'M2 168C40 95 110 30 200 21C260 15 315 45 350 73C330 67 305 61 270 61C180 62 120 110 86 168Z';
+const GRAY = 'M194 12C230 4 260 1 290 2C395 2 470 80 522 168H442C370 45 280 8 194 12Z';
+const ARC = 'M2 168C40 95 110 30 200 21C260 15 315 45 350 73';
+const PILLARS = [
+  [141, 102, 141, 168],
+  [204, 70, 204, 168],
+  [267, 61, 267, 168],
+];
+---
+
+<span
+  class:list={['arch-motif', `arch-motif--${tone}`, drift && 'arch-motif--drift', cls]}
+  data-phase={phase}
+  data-parallax={parallax}
+  aria-hidden="true"
+>
+  <svg viewBox="0 0 525 170" fill="none" focusable="false">
+    {variant === 'arc' ? (
+      <path d={ARC} vector-effect="non-scaling-stroke" />
+    ) : (
+      <>
+        <path d={PLUM} vector-effect="non-scaling-stroke" />
+        <path d={GRAY} vector-effect="non-scaling-stroke" class="arch-motif__second" />
+        {variant === 'full' &&
+          PILLARS.map(([x1, y1, x2, y2]) => (
+            <line x1={x1} y1={y1} x2={x2} y2={y2} vector-effect="non-scaling-stroke" class="arch-motif__second" />
+          ))}
+      </>
+    )}
+  </svg>
+</span>
+
+<style>
+  .arch-motif {
+    display: block;
+    pointer-events: none;
+    will-change: transform;
+  }
+  .arch-motif svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    stroke: currentColor;
+    stroke-width: 1px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .arch-motif--orchid {
+    color: var(--orchid);
+    opacity: 0.55;
+  }
+  .arch-motif--slate {
+    color: var(--slate);
+    opacity: 0.45;
+  }
+  .arch-motif--plum {
+    color: var(--plum);
+    opacity: 0.5;
+  }
+  .arch-motif--light {
+    color: var(--on-dark);
+    opacity: 0.32;
+  }
+  .arch-motif__second {
+    opacity: 0.7;
+  }
+  .arch-motif--drift svg {
+    animation: arch-drift var(--dur, var(--d-drift)) var(--ease-in-out) infinite alternate;
+    animation-delay: var(--delay, 0s);
+  }
+  .arch-motif[data-phase='1'] {
+    --dur: 7s;
+    --delay: -2.4s;
+  }
+  .arch-motif[data-phase='2'] {
+    --dur: 9s;
+    --delay: -5.1s;
+  }
+  .arch-motif[data-phase='3'] {
+    --dur: 7.6s;
+    --delay: -3.7s;
+  }
+  @keyframes arch-drift {
+    from {
+      transform: translateY(-8px) rotate(-2deg);
+    }
+    to {
+      transform: translateY(8px) rotate(2deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .arch-motif--drift svg {
+      animation: none;
+    }
+  }
+</style>

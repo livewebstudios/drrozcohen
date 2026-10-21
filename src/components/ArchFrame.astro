@@ -1,0 +1,190 @@
+---
+/**
+ * Real photography inside an arch-shaped frame (the logo's arch, as a rounded top).
+ * shape: 'tall'   portrait arch, semicircular top (hero portraits)
+ *        'top'    landscape frame with a gentle arched top (service rows, snapshots)
+ *        'wide'   wide stage frame with an asymmetric arch that echoes the logo
+ *        'small'  small round-top avatar (author card)
+ * parallax: the photo glides inside the fixed frame (translateY, 0.8x) via motion.ts.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+export interface Props {
+  src: ImageMetadata;
+  alt: string;
+  shape?: 'tall' | 'top' | 'wide' | 'small';
+  sizes: string;
+  widths?: number[];
+  /** Focal point as "x y" percentages in steps of 5, e.g. "60 40" (CSS object-position). */
+  focus?: string;
+  priority?: boolean;
+  parallax?: boolean;
+  quality?: number;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  shape = 'tall',
+  sizes,
+  widths = [400, 640, 960, 1280],
+  focus = '50 50',
+  priority = false,
+  parallax = false,
+  quality = 72,
+  class: cls = '',
+} = Astro.props;
+const usable = widths.filter((w) => w <= src.width);
+const [fx, fy] = focus.split(/\s+/).map((n) => Math.round(Number(n) / 5) * 5);
+const focusClass = `fx-${fx} fy-${fy}`;
+---
+
+<div class:list={['arch-frame', `arch-frame--${shape}`, parallax && 'arch-frame--parallax', cls]}>
+  <div class="arch-frame__media" data-parallax-inner={parallax ? '' : undefined}>
+    <Picture
+      src={src}
+      alt={alt}
+      formats={['avif', 'webp']}
+      fallbackFormat="jpg"
+      quality={quality}
+      layout="full-width"
+      fit="cover"
+      widths={usable.length ? usable : [src.width]}
+      sizes={sizes}
+      priority={priority}
+      class={`arch-frame__img ${focusClass}`}
+    />
+  </div>
+</div>
+
+<style>
+  .arch-frame {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--blush-deep);
+    width: 100%;
+  }
+  .arch-frame--tall {
+    aspect-ratio: 4 / 5;
+    border-radius: 50% 50% var(--r-md) var(--r-md) / 40% 40% var(--r-md) var(--r-md);
+  }
+  .arch-frame--top {
+    aspect-ratio: 4 / 3;
+    border-radius: 50% 50% var(--r-md) var(--r-md) / 32% 32% var(--r-md) var(--r-md);
+  }
+  .arch-frame--wide {
+    aspect-ratio: 16 / 10;
+    border-radius: 62% 38% var(--r-md) var(--r-md) / 46% 30% var(--r-md) var(--r-md);
+  }
+  .arch-frame--small {
+    aspect-ratio: 4 / 5;
+    border-radius: 50% 50% var(--r-sm) var(--r-sm) / 40% 40% var(--r-sm) var(--r-sm);
+  }
+  .arch-frame__media {
+    position: absolute;
+    inset: 0;
+  }
+  .arch-frame--parallax .arch-frame__media {
+    inset: -8% 0;
+  }
+  .arch-frame :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .arch-frame :global(.arch-frame__img) {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: var(--fx, 50%) var(--fy, 50%);
+    transition: transform var(--d-slow) var(--ease-out);
+  }
+  /* Focal points (object-position) without inline styles. */
+  .arch-frame :global(.fx-20) {
+    --fx: 20%;
+  }
+  .arch-frame :global(.fx-25) {
+    --fx: 25%;
+  }
+  .arch-frame :global(.fx-30) {
+    --fx: 30%;
+  }
+  .arch-frame :global(.fx-35) {
+    --fx: 35%;
+  }
+  .arch-frame :global(.fx-40) {
+    --fx: 40%;
+  }
+  .arch-frame :global(.fx-45) {
+    --fx: 45%;
+  }
+  .arch-frame :global(.fx-50) {
+    --fx: 50%;
+  }
+  .arch-frame :global(.fx-55) {
+    --fx: 55%;
+  }
+  .arch-frame :global(.fx-60) {
+    --fx: 60%;
+  }
+  .arch-frame :global(.fx-65) {
+    --fx: 65%;
+  }
+  .arch-frame :global(.fx-70) {
+    --fx: 70%;
+  }
+  .arch-frame :global(.fx-75) {
+    --fx: 75%;
+  }
+  .arch-frame :global(.fx-80) {
+    --fx: 80%;
+  }
+  .arch-frame :global(.fy-20) {
+    --fy: 20%;
+  }
+  .arch-frame :global(.fy-25) {
+    --fy: 25%;
+  }
+  .arch-frame :global(.fy-30) {
+    --fy: 30%;
+  }
+  .arch-frame :global(.fy-35) {
+    --fy: 35%;
+  }
+  .arch-frame :global(.fy-40) {
+    --fy: 40%;
+  }
+  .arch-frame :global(.fy-45) {
+    --fy: 45%;
+  }
+  .arch-frame :global(.fy-50) {
+    --fy: 50%;
+  }
+  .arch-frame :global(.fy-55) {
+    --fy: 55%;
+  }
+  .arch-frame :global(.fy-60) {
+    --fy: 60%;
+  }
+  .arch-frame :global(.fy-65) {
+    --fy: 65%;
+  }
+  .arch-frame :global(.fy-70) {
+    --fy: 70%;
+  }
+  .arch-frame :global(.fy-75) {
+    --fy: 75%;
+  }
+  .arch-frame :global(.fy-80) {
+    --fy: 80%;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .arch-frame:hover :global(.arch-frame__img) {
+      transform: scale(1.03);
+    }
+  }
+</style>

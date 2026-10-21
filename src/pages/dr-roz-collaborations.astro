@@ -1,0 +1,499 @@
+---
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import ArchFrame from '../components/ArchFrame.astro';
+import ArchMotif from '../components/ArchMotif.astro';
+import ArchDivider from '../components/ArchDivider.astro';
+import LogoRow from '../components/LogoRow.astro';
+import Threads from '../components/Threads.astro';
+import Button from '../components/Button.astro';
+import PreloadImage from '../components/PreloadImage.astro';
+import { LOGOS } from '../data/site';
+import { ogPath } from '../lib/og-path';
+import { breadcrumbs, ID, abs } from '../lib/schema';
+import { hero, trustedBy, why, ways, workshops, custom, testimonial, meta } from '../data/pages/collaborations';
+
+import heroImg from '../assets/images/photos/roscohen_190.jpg';
+import roz75 from '../assets/images/photos/roscohen_75.jpg';
+import dscf from '../assets/images/photos/dscf5118_2.jpg';
+
+const whyImages = [
+  { src: roz75, alt: 'Dr. Roz Cohen walking among bright pink and yellow geometric sculptures', focus: '50 45' },
+  { src: dscf, alt: 'A smiling woman with curly hair seated in a bright, art filled room', focus: '50 35' },
+];
+
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const schema = [
+  {
+    '@type': 'WebPage',
+    '@id': abs('/dr-roz-collaborations/#webpage'),
+    url: abs('/dr-roz-collaborations/'),
+    name: meta.title,
+    description: meta.description,
+    isPartOf: { '@id': ID.website },
+  },
+  ...ways.items.map((w) => ({
+    '@type': 'Service',
+    '@id': abs(`/dr-roz-collaborations/#${slug(w.title)}`),
+    name: w.title.toLowerCase().replace(/(^|\s)\S/g, (c) => c.toUpperCase()),
+    description: w.body,
+    provider: { '@id': ID.org },
+    areaServed: { '@type': 'Country', name: 'United States' },
+  })),
+  ...workshops.sessions.map((s) => ({
+    '@type': 'Service',
+    '@id': abs(`/dr-roz-collaborations/#${slug(s.label + ' ' + s.title)}`),
+    name: s.title.toLowerCase().replace(/(^|\s)\S/g, (c) => c.toUpperCase()),
+    serviceType: 'Workshop',
+    description: workshops.intro,
+    provider: { '@id': ID.org },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: s.label,
+      itemListElement: s.topics.map((t) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: t } })),
+    },
+  })),
+  breadcrumbs([
+    { name: 'Home', path: '/' },
+    { name: 'Dr. Roz Collaborations', path: '/dr-roz-collaborations/' },
+  ]),
+];
+---
+
+<Base title={meta.title} description={meta.description} path="/dr-roz-collaborations/" ogImage={ogPath('dr-roz-collaborations')} schema={schema}>
+  <PreloadImage slot="head" src={heroImg} widths={[400, 640, 720, 960, 1280]} sizes="(min-width: 1024px) 36vw, (min-width: 640px) 70vw, 92vw" quality={72} />
+  <!-- 1. Hero -->
+  <section class="chero" data-hero aria-labelledby="collab-page-title">
+    <Threads variant="light" seed={61} density={0.7} parallax={0.4} />
+    <div class="chero__objects" data-parallax="0.7" aria-hidden="true">
+      <ArchMotif variant="full" tone="orchid" drift phase={1} class="chero__arch" />
+    </div>
+    <div class="container chero__grid">
+      <div class="chero__text">
+        <h1 id="collab-page-title" class="fade-in">{hero.title}</h1>
+        <p class="chero__sub">{hero.sub}</p>
+      </div>
+      <div class="chero__media" data-parallax="0.85">
+        <ArchFrame
+          src={heroImg}
+          alt="Dr. Roz Cohen in a leather jacket and pink scarf before a sunlit glass pavilion"
+          shape="tall"
+          sizes="(min-width: 1024px) 36vw, (min-width: 640px) 70vw, 92vw"
+          widths={[400, 640, 720, 960, 1280]}
+          focus="50 45"
+          priority
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Trusted By -->
+  <Section flush>
+    <div class="container trusted">
+      <LogoRow label={trustedBy.label} logos={LOGOS.trusted} id="collab-trusted-by" />
+    </div>
+  </Section>
+
+  <!-- 3. Why Collaborate -->
+  <Section class="why" labelledby="why-title">
+    <div class="container">
+      <h2 id="why-title" class="why__title" data-reveal>{why.title}</h2>
+
+      <div class="why__block" data-reveal-group>
+        <div class="why__media" data-reveal>
+          <ArchFrame src={whyImages[0].src} alt={whyImages[0].alt} shape="top" sizes="(min-width: 1024px) 40vw, 92vw" focus={whyImages[0].focus} parallax />
+        </div>
+        <div class="why__copy">
+          <h3 class="why__h3" data-reveal>{why.blocks[0].title}</h3>
+          <p data-reveal>{why.blocks[0].body}</p>
+        </div>
+      </div>
+
+      <figure class="why__quote" data-reveal>
+        <ArchMotif variant="arc" tone="light" class="why__quote-arch" />
+        <blockquote>
+          <p>“{why.testimonial}”</p>
+        </blockquote>
+      </figure>
+
+      <div class="why__block why__block--flip" data-reveal-group>
+        <div class="why__media" data-reveal>
+          <ArchFrame src={whyImages[1].src} alt={whyImages[1].alt} shape="tall" sizes="(min-width: 1024px) 32vw, 92vw" focus={whyImages[1].focus} parallax />
+        </div>
+        <div class="why__copy">
+          <h3 class="why__h3" data-reveal>{why.blocks[1].title}</h3>
+          <p data-reveal>{why.blocks[1].body}</p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- 4. Ways to Collaborate -->
+  <Section class="ways" tone="blush" labelledby="ways-title">
+    <div class="container">
+      <header class="ways__head" data-reveal-group>
+        <p class="eyebrow" data-reveal>{ways.eyebrow}</p>
+        <h2 id="ways-title" data-reveal>{ways.title}</h2>
+      </header>
+      <ol class="ways__grid" role="list" data-reveal-group>
+        {
+          ways.items.map((w) => (
+            <li class="way" id={slug(w.title)} data-reveal>
+              <span class="way__num" aria-hidden="true">
+                {w.num}
+              </span>
+              <h3 class="way__title">{w.title}</h3>
+              <p>{w.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
+  <!-- 5. Workshop Sessions + 6. Customized -->
+  <Section class="workshops" labelledby="workshops-title">
+    <div class="container">
+      <header class="workshops__head" data-reveal-group>
+        <h2 id="workshops-title" data-reveal>{workshops.title}</h2>
+        <p class="workshops__intro" data-reveal>{workshops.intro}</p>
+      </header>
+      <div class="workshops__grid" data-reveal-group>
+        {
+          workshops.sessions.map((s) => (
+            <article class="session" id={slug(s.label + ' ' + s.title)} aria-labelledby={`${slug(s.label)}-title`} data-reveal>
+              <p class="eyebrow session__label">{s.label}</p>
+              <h3 class="session__title" id={`${slug(s.label)}-title`}>
+                <span class="visually-hidden">{s.label}: </span>
+                {s.title}
+              </h3>
+              <ul class="session__topics" role="list">
+                {s.topics.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="custom" data-reveal-group>
+        <h3 class="custom__title" data-reveal>{custom.title}</h3>
+        <p data-reveal>{custom.body}</p>
+        <div data-reveal>
+          <Button href="/contact-us/">GET IN TOUCH</Button>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <ArchDivider tone="orchid" />
+
+  <!-- 7. Testimonial -->
+  <Section class="testimonial">
+    <div class="container container--narrow">
+      <figure class="testimonial__fig" data-reveal>
+        <span class="testimonial__mark" aria-hidden="true">“</span>
+        <blockquote class="testimonial__quote">
+          <p>{testimonial.text}</p>
+        </blockquote>
+        <figcaption class="testimonial__cite">
+          <span class="testimonial__name" id="testimonial-name">{testimonial.name}</span>
+          <span class="testimonial__role">{testimonial.role}</span>
+        </figcaption>
+      </figure>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  /* Hero */
+  .chero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-top: calc(var(--header-h) + var(--s-7));
+    padding-bottom: var(--s-9);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--blush) 100%);
+  }
+  .chero :global(.threads-bg) {
+    z-index: -2;
+  }
+  .chero__objects {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .chero :global(.chero__arch) {
+    position: absolute;
+    width: clamp(220px, 30vw, 480px);
+    left: -5%;
+    bottom: 2%;
+  }
+  .chero__grid {
+    display: grid;
+    gap: var(--s-7);
+    align-items: center;
+  }
+  .chero h1 {
+    max-width: 15ch;
+    font-size: clamp(2.25rem, 1.4rem + 3.2vw, 4rem);
+  }
+  .chero__sub {
+    margin-top: var(--s-6);
+    max-width: 34ch;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-lg);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .chero__media {
+    width: min(100%, 440px);
+    justify-self: center;
+  }
+  @media (min-width: 1024px) {
+    .chero {
+      min-height: min(92svh, 900px);
+      display: flex;
+      align-items: center;
+    }
+    .chero__grid {
+      grid-template-columns: 7fr 5fr;
+      gap: var(--s-8);
+    }
+    .chero__media {
+      justify-self: end;
+    }
+  }
+  .trusted {
+    padding-block: var(--s-7);
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Why */
+  .why__title {
+    max-width: 26ch;
+    margin-bottom: var(--s-8);
+  }
+  .why__block {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  .why__media {
+    width: 100%;
+  }
+  .why__block--flip .why__media {
+    width: min(100%, 380px);
+  }
+  .why__h3 {
+    font-size: var(--fs-h4);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--s-4);
+  }
+  .why__copy p {
+    max-width: 54ch;
+    font-size: var(--fs-lg);
+  }
+  .why__quote {
+    position: relative;
+    overflow: hidden;
+    margin-block: var(--s-8);
+    padding: clamp(var(--s-6), 5vw, var(--s-9));
+    border-radius: var(--r-lg);
+    background: var(--plum);
+    color: var(--on-dark);
+  }
+  .why__quote :global(.why__quote-arch) {
+    position: absolute;
+    width: 46%;
+    right: -6%;
+    bottom: -10%;
+  }
+  .why__quote p {
+    position: relative;
+    max-width: 40ch;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: clamp(1.375rem, 1rem + 1.4vw, 2.125rem);
+    line-height: 1.32;
+    letter-spacing: var(--track-snug);
+    text-wrap: balance;
+  }
+  @media (min-width: 1024px) {
+    .why__block {
+      grid-template-columns: 6fr 5fr;
+      gap: var(--s-9);
+    }
+    .why__block--flip .why__media {
+      order: 2;
+      justify-self: center;
+    }
+    .why__block--flip {
+      grid-template-columns: 6fr 5fr;
+    }
+    .why__quote {
+      margin-inline: 8%;
+    }
+  }
+
+  /* Ways */
+  .ways__head {
+    display: grid;
+    gap: var(--s-3);
+    margin-bottom: var(--s-8);
+  }
+  .ways__grid {
+    display: grid;
+  }
+  .way {
+    padding-block: var(--s-6);
+    border-top: 1px solid var(--line-strong);
+  }
+  .way__num {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(4rem, 2.5rem + 5vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--plum);
+    margin-bottom: var(--s-5);
+  }
+  .way__title {
+    font-size: var(--fs-h4);
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    margin-bottom: var(--s-4);
+  }
+  @media (min-width: 1024px) {
+    .ways__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .way {
+      padding: var(--s-6) var(--s-6) var(--s-4);
+      border-top: 0;
+      border-left: 1px solid var(--line-strong);
+    }
+    .way:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  /* Workshops */
+  .workshops__head {
+    display: grid;
+    gap: var(--s-4);
+    margin-bottom: var(--s-7);
+  }
+  .workshops__intro {
+    max-width: 52ch;
+    font-size: var(--fs-lg);
+  }
+  .workshops__grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .session {
+    padding: clamp(var(--s-5), 4vw, var(--s-7));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-1);
+  }
+  .session__label {
+    color: var(--plum);
+    margin-bottom: var(--s-3);
+  }
+  .session__title {
+    font-size: var(--fs-h4);
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    margin-bottom: var(--s-5);
+  }
+  .session__topics {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .session__topics li {
+    position: relative;
+    padding-left: var(--s-6);
+  }
+  /* Small arch bullet drawn in CSS (no icon font). */
+  .session__topics li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.85rem;
+    height: 0.5rem;
+    border: 1.5px solid var(--plum);
+    border-bottom: 0;
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+  .custom {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: start;
+    margin-top: var(--s-8);
+    padding-top: var(--s-7);
+    border-top: 1px solid var(--line);
+    max-width: 60ch;
+  }
+  .custom__title {
+    font-size: var(--fs-h4);
+    letter-spacing: 0.06em;
+  }
+  .custom p {
+    font-size: var(--fs-lg);
+  }
+  @media (min-width: 1024px) {
+    .workshops__head {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+    .workshops__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Testimonial */
+  .testimonial__fig {
+    position: relative;
+    text-align: center;
+  }
+  .testimonial__mark {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 6rem;
+    line-height: 0.6;
+    color: var(--orchid);
+  }
+  .testimonial__quote p {
+    margin-top: var(--s-5);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    line-height: 1.45;
+    letter-spacing: var(--track-snug);
+    color: var(--ink);
+  }
+  .testimonial__cite {
+    display: grid;
+    gap: var(--s-1);
+    margin-top: var(--s-6);
+  }
+  .testimonial__name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    color: var(--plum);
+  }
+  .testimonial__role {
+    font-size: var(--fs-sm);
+    color: var(--slate);
+  }
+</style>

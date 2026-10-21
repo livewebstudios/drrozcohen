@@ -1,0 +1,168 @@
+---
+import { Image } from 'astro:assets';
+import logoFooter from '../assets/images/brand/logo-footer.png';
+import badge from '../assets/images/brand/verifiedsecured.png';
+import { NAV, FOCUS, SITE } from '../data/site';
+import ArchMotif from './ArchMotif.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <ArchMotif variant="arches" tone="light" class="site-footer__motif" />
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <a href="/" class="site-footer__logo" aria-label="Dr. Roz Cohen, home">
+        <Image src={logoFooter} alt="Dr. Roz Cohen" width={200} layout="fixed" />
+      </a>
+    </div>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Contact</h2>
+      <ul role="list" class="site-footer__list">
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        <li>
+          <a href={SITE.linkedin} target="_blank" rel="noopener">
+            FOLLOW ON LINKEDIN<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <nav class="site-footer__col" aria-labelledby="footer-quick-links">
+      <h2 class="site-footer__heading" id="footer-quick-links">Quick Links</h2>
+      <ul role="list" class="site-footer__list site-footer__list--caps">
+        {NAV.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__heading">Focus</h2>
+      <ul role="list" class="site-footer__list site-footer__list--caps site-footer__focus">
+        {FOCUS.map((f) => <li>{f}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container site-footer__base">
+    <p class="site-footer__copy">© {year} Dr. Roz Cohen. All rights reserved.</p>
+    <a class="site-footer__lws" href={SITE.lwsUrl} target="_blank" rel="noopener">
+      <Image src={badge} alt="Verified and secured by Live Web Studios" width={150} layout="fixed" class="site-footer__badge" />
+      <span class="site-footer__credit">Built by Live Web Studios</span>
+      <span class="visually-hidden"> (opens in a new tab)</span>
+    </a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    overflow: hidden;
+    background: var(--charcoal);
+    color: var(--on-dark);
+    padding-block: var(--s-9) var(--s-6);
+  }
+  .site-footer :global(.site-footer__motif) {
+    position: absolute;
+    right: -6%;
+    bottom: -14%;
+    width: min(58vw, 640px);
+    opacity: 0.14;
+  }
+  .site-footer__grid {
+    position: relative;
+    display: grid;
+    gap: var(--s-7) var(--s-6);
+    grid-template-columns: 1fr;
+  }
+  .site-footer__logo :global(img) {
+    width: 180px;
+    height: auto;
+  }
+  .site-footer__heading {
+    font-family: var(--font-head);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: var(--track-eyebrow);
+    text-transform: uppercase;
+    color: var(--on-dark-soft);
+    margin-bottom: var(--s-4);
+  }
+  .site-footer__list {
+    display: grid;
+    gap: 0;
+    font-size: var(--fs-sm);
+  }
+  .site-footer__list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .site-footer__list li:not(:has(a)) {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+  }
+  .site-footer__list--caps {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: var(--track-eyebrow);
+  }
+  .site-footer a {
+    color: var(--on-dark);
+    text-decoration-color: transparent;
+  }
+  .site-footer a:hover {
+    color: var(--orchid-soft);
+    text-decoration-color: currentColor;
+  }
+  .site-footer__focus li {
+    color: var(--on-dark);
+  }
+  .site-footer__base {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-5);
+    margin-top: var(--s-8);
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--line-on-dark);
+    font-size: var(--fs-sm);
+  }
+  .site-footer__copy {
+    color: var(--on-dark-soft);
+  }
+  .site-footer__lws {
+    min-height: 44px;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4);
+  }
+  .site-footer :global(.site-footer__badge) {
+    width: 150px;
+    height: auto;
+  }
+  .site-footer__credit {
+    font-size: var(--fs-sm);
+  }
+  @media (min-width: 768px) {
+    .site-footer__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .site-footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1024px) {
+    .site-footer__grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+    .site-footer__brand {
+      grid-column: auto;
+    }
+  }
+</style>

@@ -1,0 +1,45 @@
+{
+  "name": "drrozcohen",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "assets:fetch": "node scripts/fetch-assets.mjs && node scripts/split-logos.mjs && node scripts/make-favicons.mjs",
+    "blog:import": "node scripts/import-blog.mjs discover && node scripts/fetch-assets.mjs && node scripts/import-blog.mjs convert && node scripts/blog-crosscheck.mjs",
+    "verify:static": "node scripts/verify-copy.mjs && node scripts/killlist.mjs && node scripts/seo-check.mjs && node scripts/contrast-check.mjs && node scripts/url-audit.mjs",
+    "verify:browser": "node scripts/qa.mjs && node scripts/layout-audit.mjs && node scripts/motion-check.mjs"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.3",
+    "@astrojs/react": "^7.1.0",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/open-sans": "^5.3.0",
+    "@fontsource/league-script": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "astro": "^7.4.1",
+    "gsap": "^3.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.11",
+    "@axe-core/playwright": "^4.14.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/turndown": "^5.0.6",
+    "linkedom": "^0.18.13",
+    "playwright": "^1.64.1",
+    "satori": "^0.63.2",
+    "turndown": "^7.2.4",
+    "typescript": "^6.0.3"
+  }
+}

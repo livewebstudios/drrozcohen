@@ -1,0 +1,41 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BlogListing from '../../../components/BlogListing.astro';
+import { getPosts, PAGE_SIZE } from '../../../lib/blog';
+import { CATEGORIES, slugify } from '../../../data/site';
+import { ogPath } from '../../../lib/og-path';
+
+export const getStaticPaths = (async () => {
+  const all = await getPosts();
+  return CATEGORIES.flatMap((cat) => {
+    const posts = all.filter((p) => p.data.categories.includes(cat));
+    const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+    return Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => ({
+      params: { cat: slugify(cat), page: n === 1 ? undefined : `page/${n}` },
+      props: { cat, posts: posts.slice((n - 1) * PAGE_SIZE, n * PAGE_SIZE), page: n, totalPages, count: posts.length },
+    }));
+  });
+}) satisfies GetStaticPaths;
+
+const { cat, posts, page, totalPages, count } = Astro.props;
+const base = `/category/${slugify(cat)}/`;
+// Authored meta for archives (no client copy exists for these): pick the first variant in 140 to 158 chars.
+const variants = [
+  `${count} posts from Dr. Roz Cohen on ${cat.toLowerCase()} at work. Leadership content and research-backed ideas for building cultures where people feel they belong.`,
+  `${count} posts from Dr. Roz Cohen on ${cat.toLowerCase()}. Leadership content and research-backed ideas for building cultures where people feel they belong.`,
+  `${count} posts from Dr. Roz Cohen on ${cat.toLowerCase()}. Leadership content and research-backed ideas for cultures where people feel they belong.`,
+];
+const description = variants.find((v) => v.length >= 140 && v.length <= 155) ?? variants[2];
+---
+
+<BlogListing
+  {posts}
+  {page}
+  {totalPages}
+  {base}
+  title={cat}
+  category={cat}
+  metaTitle={`${cat}${page > 1 ? `, Page ${page}` : ''} | Dr. Roz Cohen of Socius Strategies`}
+  metaDescription={description}
+  ogImage={ogPath(`category-${slugify(cat)}`)}
+/>

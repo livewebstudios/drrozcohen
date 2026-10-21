@@ -1,0 +1,408 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import ArchFrame from '../components/ArchFrame.astro';
+import ArchMotif from '../components/ArchMotif.astro';
+import ArchDivider from '../components/ArchDivider.astro';
+import Threads from '../components/Threads.astro';
+import Button from '../components/Button.astro';
+import CtaBand from '../components/CtaBand.astro';
+import PreloadImage from '../components/PreloadImage.astro';
+import { ogPath } from '../lib/og-path';
+import { breadcrumbs, ID } from '../lib/schema';
+import { hero, bio, pullQuote, snapshot, media, cta, meta } from '../data/pages/about';
+
+import portrait from '../assets/images/photos/roscohen_46.jpg';
+import roz204 from '../assets/images/photos/roscohen_204.jpg';
+import roz80 from '../assets/images/photos/roscohen_80.jpg';
+import rda117 from '../assets/images/photos/rda_-_project_equity_-_fall_2023-117.jpg';
+import letsTalk from '../assets/images/photos/let_s_talk.jpg';
+import includingYou from '../assets/images/photos/including_you_podcast.jpg';
+import antioch from '../assets/images/photos/antioch-roz.jpg';
+
+const HERO_SIZES = '(min-width: 1024px) 38vw, (min-width: 640px) 70vw, 92vw';
+
+const snapshotImages = [
+  { src: roz204, alt: 'Dr. Roz Cohen seated at an outdoor table in downtown San Francisco', focus: '50 35' },
+  { src: roz80, alt: 'Dr. Roz Cohen in a denim jacket among tall succulent plants', focus: '50 30' },
+  { src: rda117, alt: 'Dr. Roz Cohen laughing while leading a workshop with a group', focus: '40 40' },
+];
+const mediaArt = [
+  { src: letsTalk, alt: "Let's Talk panel graphic asking what is the future of work, with Dr. Rosalind Cohen", fit: 'contain' },
+  { src: includingYou, alt: 'Including You podcast episode 39 cover featuring Dr. Rosalind Cohen on belonging', fit: 'contain' },
+  { src: antioch, alt: 'Portrait of Dr. Roz Cohen in a magenta blazer against a dark wall', fit: 'cover' },
+];
+
+const schema = [
+  {
+    '@type': 'ProfilePage',
+    '@id': 'https://drrozcohen.com/about/#webpage',
+    url: 'https://drrozcohen.com/about/',
+    name: meta.title,
+    description: meta.description,
+    isPartOf: { '@id': ID.website },
+    mainEntity: { '@id': ID.person },
+  },
+  breadcrumbs([
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about/' },
+  ]),
+];
+---
+
+<Base title={meta.title} description={meta.description} path="/about/" ogImage={ogPath('about')} type="profile" schema={schema}>
+  <PreloadImage slot="head" src={portrait} widths={[400, 640, 720, 960, 1280]} sizes={HERO_SIZES} quality={72} />
+  <!-- 1. Hero -->
+  <section class="ahero" data-hero aria-labelledby="about-title">
+    <Threads variant="light" seed={41} density={0.45} parallax={0.4} />
+    <div class="ahero__objects" data-parallax="0.7" aria-hidden="true">
+      <ArchMotif variant="arches" tone="slate" drift phase={1} class="ahero__arch" />
+    </div>
+    <div class="container ahero__grid">
+      <div class="ahero__text">
+        <p class="ahero__greeting script fade-in">{hero.greeting}</p>
+        <h1 id="about-title" class="fade-in">{hero.title}</h1>
+        <div class="ahero__lines">
+          {hero.lines.map((l) => <p>{l}</p>)}
+        </div>
+      </div>
+      <div class="ahero__portrait" data-parallax="0.85">
+        <ArchFrame
+          src={portrait}
+          alt="Dr. Roz Cohen smiling in a denim jacket against a terracotta wall"
+          shape="tall"
+          sizes={HERO_SIZES}
+          widths={[400, 640, 720, 960, 1280]}
+          focus="60 45"
+          priority
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Bio -->
+  <Section class="bio">
+    <div class="container bio__grid">
+      <aside class="bio__aside" aria-hidden="true">
+        <ArchMotif variant="full" tone="orchid" class="bio__motif" />
+        <p class="bio__pull">“{pullQuote}”</p>
+      </aside>
+      <div class="bio__text" data-reveal-group>
+        {bio.map((p) => <p data-reveal>{p}</p>)}
+      </div>
+    </div>
+  </Section>
+
+  <ArchDivider tone="orchid" />
+
+  <!-- 3. Career Snapshot -->
+  <Section class="snap" labelledby="snap-title">
+    <div class="container">
+      <header class="snap__head" data-reveal-group>
+        <p class="eyebrow" data-reveal>{snapshot.eyebrow}</p>
+        <h2 id="snap-title" data-reveal>{snapshot.title}</h2>
+      </header>
+      <ol class="snap__list" role="list">
+        {
+          snapshot.items.map((item, i) => (
+            <li class="snap__item" data-reveal-group>
+              <div class="snap__media" data-reveal>
+                <ArchFrame
+                  src={snapshotImages[i].src}
+                  alt={snapshotImages[i].alt}
+                  shape={i === 2 ? 'top' : 'tall'}
+                  sizes="(min-width: 1024px) 34vw, (min-width: 640px) 60vw, 92vw"
+                  focus={snapshotImages[i].focus}
+                  parallax
+                />
+              </div>
+              <div class="snap__copy">
+                <span class="snap__num" aria-hidden="true" data-reveal>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 class="snap__title" data-reveal>{item.title}</h3>
+                <p data-reveal>{item.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
+  <!-- 4. Media Features -->
+  <Section class="media" tone="blush" labelledby="media-title">
+    <div class="container">
+      <h2 id="media-title" class="media__title" data-reveal>{media.title}</h2>
+      <ul class="media__grid" role="list" data-reveal-group>
+        {
+          media.items.map((m, i) => (
+            <li class="mcard" data-reveal>
+              <div class:list={['mcard__art', `mcard__art--${mediaArt[i].fit}`]}>
+                <Picture
+                  src={mediaArt[i].src}
+                  alt={mediaArt[i].alt}
+                  formats={['avif', 'webp']}
+                  fallbackFormat="jpg"
+                  quality={74}
+                  widths={[400, 640, 900]}
+                  sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+                  class="mcard__img"
+                />
+              </div>
+              <div class="mcard__body">
+                <h3 class="mcard__h3">{m.title}</h3>
+                <Button href={m.href} variant="outline" external>
+                  {m.kind === 'podcast' ? 'LISTEN' : 'READ THE POST'}
+                </Button>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <!-- 5. CTA -->
+  <CtaBand text={cta.body} id="about-cta" seed={43} />
+</Base>
+
+<style>
+  /* Hero */
+  .ahero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-top: calc(var(--header-h) + var(--s-7));
+    padding-bottom: var(--s-9);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--blush) 100%);
+  }
+  .ahero :global(.threads-bg) {
+    z-index: -2;
+  }
+  .ahero__objects {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .ahero :global(.ahero__arch) {
+    position: absolute;
+    width: clamp(220px, 30vw, 460px);
+    left: 38%;
+    bottom: 4%;
+  }
+  .ahero__grid {
+    display: grid;
+    gap: var(--s-7);
+    align-items: center;
+  }
+  .ahero__greeting {
+    font-size: clamp(2.5rem, 1.6rem + 3.4vw, 4.75rem);
+    line-height: 1;
+    color: var(--orchid);
+    margin-bottom: var(--s-3);
+  }
+  .ahero__lines {
+    display: grid;
+    gap: var(--s-3);
+    margin-top: var(--s-6);
+    max-width: 40ch;
+  }
+  .ahero__lines p:first-child {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-lg);
+    color: var(--ink);
+  }
+  .ahero__lines p:last-child {
+    color: var(--ink-soft);
+    font-size: var(--fs-lg);
+    line-height: 1.5;
+  }
+  .ahero__portrait {
+    width: min(100%, 460px);
+    justify-self: center;
+  }
+  @media (min-width: 1024px) {
+    .ahero {
+      min-height: min(92svh, 900px);
+      display: flex;
+      align-items: center;
+    }
+    .ahero__grid {
+      grid-template-columns: 7fr 5fr;
+      gap: var(--s-8);
+    }
+    .ahero__portrait {
+      justify-self: end;
+    }
+  }
+
+  /* Bio */
+  .bio__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .bio__aside {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .bio :global(.bio__motif) {
+    width: min(260px, 70%);
+  }
+  .bio__pull {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(1.625rem, 1.1rem + 2vw, 2.625rem);
+    line-height: 1.15;
+    letter-spacing: var(--track-tight);
+    color: var(--plum);
+    max-width: 16ch;
+  }
+  .bio__text {
+    display: grid;
+    gap: var(--s-5);
+    max-width: var(--measure);
+    font-size: var(--fs-lg);
+    line-height: 1.7;
+  }
+  .bio__text p:first-child::first-line {
+    font-weight: 600;
+  }
+  @media (min-width: 1024px) {
+    .bio__grid {
+      grid-template-columns: 4fr 7fr;
+      gap: var(--s-9);
+    }
+    .bio__aside {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-7));
+    }
+  }
+
+  /* Career snapshot */
+  .snap__head {
+    display: grid;
+    gap: var(--s-3);
+    margin-bottom: var(--s-8);
+  }
+  .snap__list {
+    display: grid;
+    gap: var(--s-9);
+  }
+  .snap__item {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  .snap__media {
+    width: min(100%, 440px);
+  }
+  .snap__num {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--orchid);
+    margin-bottom: var(--s-3);
+  }
+  .snap__title {
+    font-size: var(--fs-h4);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--s-4);
+  }
+  .snap__copy p {
+    max-width: 46ch;
+    font-size: var(--fs-lg);
+  }
+  @media (min-width: 1024px) {
+    .snap__item {
+      grid-template-columns: 5fr 6fr;
+      gap: var(--s-9);
+    }
+    .snap__item:nth-child(even) .snap__media {
+      order: 2;
+      justify-self: end;
+    }
+    .snap__item:nth-child(odd) .snap__copy {
+      padding-left: var(--s-6);
+    }
+    .snap__item:nth-child(3) .snap__media {
+      width: 100%;
+      max-width: 560px;
+    }
+  }
+
+  /* Media features */
+  .media__title {
+    margin-bottom: var(--s-7);
+  }
+  .media__grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .mcard {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-1);
+    transition:
+      transform var(--d-fast) var(--ease-out),
+      box-shadow var(--d-fast) var(--ease-out);
+  }
+@media (hover: hover) and (pointer: fine) {
+  .mcard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+  }
+}
+  .mcard__art {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--blush-deep);
+  }
+  .mcard__art :global(picture) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .mcard__art :global(.mcard__img) {
+    width: 100%;
+    height: 100%;
+  }
+  .mcard__art--contain :global(.mcard__img) {
+    object-fit: contain;
+    padding: var(--s-4);
+  }
+  .mcard__art--cover :global(.mcard__img) {
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+  .mcard__body {
+    display: grid;
+    gap: var(--s-5);
+    align-content: space-between;
+    justify-items: start;
+    padding: var(--s-6);
+  }
+  .mcard__h3 {
+    font-size: var(--fs-h4);
+  }
+  @media (min-width: 768px) {
+    .media__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .media__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,189 @@
+---
+import { Picture } from 'astro:assets';
+import type { Post } from '../lib/blog';
+import { postPath, formatDate, isoDate, getExcerpt } from '../lib/blog';
+
+export interface Props {
+  post: Post;
+  featured?: boolean;
+  headingLevel?: 'h2' | 'h3';
+  eager?: boolean;
+}
+const { post, featured = false, headingLevel: H = 'h2', eager = false } = Astro.props;
+const { title, date, categories, featuredImage, featuredAlt } = post.data;
+const excerpt = getExcerpt(post);
+const primary = categories[0];
+const href = postPath(post);
+---
+
+<article
+  class:list={['pcard', featured && 'pcard--featured']}
+  data-post-card
+  data-categories={categories.join('|')}
+  data-reveal
+>
+  <div class="pcard__media">
+    {
+      featuredImage && (
+        <Picture
+          src={featuredImage}
+          alt={featuredAlt}
+          formats={['avif', 'webp']}
+          fallbackFormat="jpg"
+          quality={70}
+          widths={featured ? [640, 960, 1280] : [400, 720]}
+          sizes={featured ? '(min-width: 1024px) 58vw, 92vw' : '(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw'}
+          loading={eager ? 'eager' : 'lazy'}
+          class="pcard__img"
+        />
+      )
+    }
+  </div>
+  <div class="pcard__body">
+    <p class="pcard__meta">
+      <time datetime={isoDate(date)}>{formatDate(date)}</time>
+      {primary && primary !== 'Uncategorized' && <span class="pcard__cat">{primary}</span>}
+    </p>
+    <H class="pcard__title"><a href={href} class="pcard__link">{title}</a></H>
+    {excerpt && <p class="pcard__excerpt">{excerpt}</p>}
+    <span class="pcard__more" aria-hidden="true">READ THE POST</span>
+  </div>
+</article>
+
+<style>
+  .pcard {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-1);
+    transition:
+      transform var(--d-fast) var(--ease-out),
+      box-shadow var(--d-fast) var(--ease-out);
+  }
+  .pcard[hidden] {
+    display: none;
+  }
+@media (hover: hover) and (pointer: fine) {
+  .pcard:hover,
+  .pcard:focus-within {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+  }
+}
+  .pcard__media {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--blush-deep);
+  }
+  .pcard__media :global(picture) {
+    display: block;
+    height: 100%;
+  }
+  .pcard__media :global(.pcard__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--d-slow) var(--ease-out);
+  }
+  .pcard:hover :global(.pcard__img) {
+    transform: scale(1.03);
+  }
+  .pcard__body {
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+    padding: var(--s-5) var(--s-5) var(--s-6);
+  }
+  .pcard__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-4);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+  .pcard__cat {
+    color: var(--plum);
+  }
+  .pcard__title {
+    font-size: var(--fs-h4);
+    line-height: 1.3;
+    letter-spacing: var(--track-snug);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .pcard__link {
+    color: var(--plum);
+    text-decoration: none;
+  }
+  .pcard__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .pcard__link:focus-visible {
+    outline: none;
+  }
+  .pcard__link:focus-visible::after {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
+  }
+  .pcard__excerpt {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .pcard__more {
+    margin-top: var(--s-2);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: var(--track-eyebrow);
+    color: var(--plum);
+    text-decoration: underline;
+    text-decoration-color: var(--orchid);
+    text-underline-offset: 0.4em;
+  }
+  @media (min-width: 640px) {
+    .pcard--featured {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1024px) {
+    .pcard--featured {
+      grid-column: 1 / -1;
+      grid-template-rows: none;
+      grid-template-columns: 7fr 5fr;
+    }
+    .pcard--featured .pcard__media {
+      position: relative;
+      aspect-ratio: auto;
+      min-height: 440px;
+    }
+    .pcard--featured .pcard__media :global(picture) {
+      position: absolute;
+      inset: 0;
+    }
+    .pcard--featured .pcard__body {
+      align-content: center;
+      padding: var(--s-7);
+      gap: var(--s-4);
+    }
+    .pcard--featured .pcard__title {
+      font-size: var(--fs-h3);
+    }
+    .pcard--featured .pcard__excerpt {
+      font-size: var(--fs-base);
+    }
+  }
+</style>

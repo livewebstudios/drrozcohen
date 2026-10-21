@@ -1,0 +1,30 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BlogListing from '../../../components/BlogListing.astro';
+import { getPosts, PAGE_SIZE } from '../../../lib/blog';
+import { ogPath } from '../../../lib/og-path';
+import { hero } from '../../../data/pages/blog';
+
+export const getStaticPaths = (async () => {
+  const all = await getPosts();
+  const totalPages = Math.ceil(all.length / PAGE_SIZE);
+  return Array.from({ length: totalPages - 1 }, (_, i) => i + 2).map((n) => ({
+    params: { page: String(n) },
+    props: { posts: all.slice((n - 1) * PAGE_SIZE, n * PAGE_SIZE), page: n, totalPages },
+  }));
+}) satisfies GetStaticPaths;
+
+const { posts, page, totalPages } = Astro.props;
+---
+
+<BlogListing
+  {posts}
+  {page}
+  {totalPages}
+  base="/blog/"
+  title={hero.title}
+  intro={hero.intro}
+  metaTitle={`Blog, Page ${page} | Dr. Roz Cohen of Socius Strategies`}
+  metaDescription={`Page ${page} of ${hero.title}. Some days the posts will be great leadership content. Some days it will be deep thoughts about culture.`}
+  ogImage={ogPath('blog')}
+/>

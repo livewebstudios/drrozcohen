@@ -1,0 +1,18 @@
+---
+export interface Props {
+  href: string;
+  variant?: 'solid' | 'light' | 'outline';
+  external?: boolean;
+  class?: string;
+}
+const { href, variant = 'solid', external = false, class: cls = '' } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={['btn', `btn--${variant}`, cls]}
+  {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+>
+  <slot />
+  {external && <span class="visually-hidden"> (opens in a new tab)</span>}
+</a>

@@ -1,0 +1,316 @@
+@import './tokens.css';
+
+/* League Script is only used for "Hi, I'm Roz!" and "Ruth Bader Ginsburg", so it is subset
+   to those glyphs (7 KB instead of 25 KB). Regenerate with pyftsubset if new script text is added. */
+@font-face {
+  font-family: 'League Script';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/league-script-subset.woff2') format('woff2');
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + var(--s-4));
+}
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+ul,
+ol,
+dl,
+dd {
+  margin: 0;
+}
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+img,
+picture,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+img {
+  height: auto;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+
+/* ---------- Base ---------- */
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--track-snug);
+  color: var(--plum);
+  text-wrap: balance;
+}
+h1 {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--track-tight);
+}
+h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.12;
+  letter-spacing: var(--track-tight);
+}
+h3 {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+}
+h4 {
+  font-size: var(--fs-h4);
+  font-weight: 600;
+}
+p {
+  text-wrap: pretty;
+}
+a {
+  color: var(--plum);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color var(--d-fast) var(--ease-out), text-decoration-color var(--d-fast) var(--ease-out);
+}
+a:hover {
+  color: var(--plum-deep);
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+::selection {
+  background: var(--plum);
+  color: var(--on-dark);
+}
+strong,
+b {
+  font-weight: 700;
+}
+
+/* ---------- Utilities ---------- */
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.container--narrow {
+  max-width: calc(var(--container-narrow) + var(--gutter) * 2);
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: absolute;
+  left: var(--s-4);
+  top: var(--s-4);
+  z-index: calc(var(--z-progress) + 1);
+  padding: var(--s-3) var(--s-5);
+  background: var(--plum);
+  color: var(--on-dark);
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--track-eyebrow);
+  text-decoration: none;
+  border-radius: var(--r-pill);
+  transform: translateY(-200%);
+  transition: transform var(--d-fast) var(--ease-out);
+}
+.skip-link:focus {
+  transform: translateY(0);
+  color: var(--on-dark);
+}
+.eyebrow {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.on-dark .eyebrow {
+  color: var(--on-dark-soft);
+}
+.script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.hairline {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 0;
+}
+
+/* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-3);
+    min-height: 3rem;
+    padding: var(--s-3) var(--s-6);
+    border: 1px solid transparent;
+    border-radius: var(--r-pill);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    line-height: 1.2;
+    letter-spacing: var(--track-eyebrow);
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: var(--shadow-1);
+    transition:
+      transform var(--d-fast) var(--ease-out),
+      box-shadow var(--d-fast) var(--ease-out),
+      background-color var(--d-fast) var(--ease-out),
+      color var(--d-fast) var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+  }
+}
+  .btn--solid {
+    background: var(--plum);
+    color: var(--on-dark);
+  }
+  .btn--solid:hover {
+    background: var(--plum-deep);
+    color: var(--on-dark);
+  }
+  .btn--light {
+    background: var(--paper);
+    color: var(--plum);
+  }
+  .btn--light:hover {
+    background: var(--blush);
+    color: var(--plum-deep);
+  }
+  .btn--outline {
+    background: transparent;
+    color: var(--plum);
+    border-color: currentColor;
+    box-shadow: none;
+  }
+  .btn--outline:hover {
+    background: var(--plum);
+    color: var(--on-dark);
+    border-color: var(--plum);
+  }
+  .on-dark .btn--solid,
+  .on-dark .btn--light {
+    background: var(--paper);
+    color: var(--plum);
+  }
+  .on-dark .btn--light:hover,
+  .on-dark .btn--solid:hover {
+    background: var(--blush);
+    color: var(--plum-deep);
+  }
+
+/* ---------- Dark plum bands ---------- */
+/* Orchid focus ring drops below 3:1 on charcoal and plum-deep; use the soft orchid there. */
+.on-dark,
+.site-footer,
+.mnav__panel {
+  --focus: var(--orchid-soft);
+}
+.on-dark {
+  background: var(--plum-deep);
+  color: var(--on-dark);
+}
+.on-dark h1,
+.on-dark h2,
+.on-dark h3,
+.on-dark h4 {
+  color: var(--on-dark);
+}
+.on-dark a {
+  color: var(--orchid-soft);
+}
+.on-dark a:hover {
+  color: var(--on-dark);
+}
+
+/* ---------- Hero headline entrance (no JS needed) ---------- */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-in {
+  animation: fade-in var(--d-med) var(--ease-out) both;
+}
+
+/* ---------- Reduced motion: kill every transition and keyframe ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

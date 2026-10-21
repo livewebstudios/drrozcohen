@@ -1,0 +1,145 @@
+---
+import Base from '../layouts/Base.astro';
+import ArchFrame from '../components/ArchFrame.astro';
+import ArchMotif from '../components/ArchMotif.astro';
+import Threads from '../components/Threads.astro';
+import ContactForm from '../islands/ContactForm';
+import { SITE } from '../data/site';
+import { FORMSPREE_ID, THANKS_URL } from '../lib/env';
+import { ogPath } from '../lib/og-path';
+import { breadcrumbs, ID, abs } from '../lib/schema';
+import { hero, meta } from '../data/pages/contact';
+import portrait from '../assets/images/photos/roscohen_86.jpg';
+
+const schema = [
+  {
+    '@type': 'ContactPage',
+    '@id': abs('/contact-us/#webpage'),
+    url: abs('/contact-us/'),
+    name: meta.title,
+    description: meta.description,
+    isPartOf: { '@id': ID.website },
+    about: { '@id': ID.org },
+  },
+  breadcrumbs([
+    { name: 'Home', path: '/' },
+    { name: 'Contact', path: '/contact-us/' },
+  ]),
+];
+---
+
+<Base title={meta.title} description={meta.description} path="/contact-us/" ogImage={ogPath('contact-us')} schema={schema}>
+  <section class="contact" aria-labelledby="contact-title">
+    <Threads variant="light" seed={71} density={0.3} />
+    <ArchMotif variant="arches" tone="slate" drift phase={2} class="contact__arch" />
+    <div class="container contact__grid">
+      <div class="contact__main">
+        <h1 id="contact-title" class="fade-in">{hero.title}</h1>
+        <p class="contact__lead">{hero.body}</p>
+        <div class="contact__form">
+          <ContactForm client:visible formId={FORMSPREE_ID} idPrefix="contact" thanksUrl={THANKS_URL} />
+        </div>
+      </div>
+      <aside class="contact__side" aria-label="Contact details">
+        <div class="contact__portrait">
+          <ArchFrame
+            src={portrait}
+            alt="Dr. Roz Cohen leaning on a concrete wall among succulents in a denim jacket"
+            shape="tall"
+            sizes="(min-width: 1024px) 28vw, (min-width: 640px) 50vw, 80vw"
+            focus="50 35"
+          />
+        </div>
+        <ul class="contact__links" role="list">
+          <li>
+            <span class="eyebrow">Email</span>
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </li>
+          <li>
+            <span class="eyebrow">LinkedIn</span>
+            <a href={SITE.linkedin} target="_blank" rel="noopener">
+              FOLLOW ON LINKEDIN<span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding-top: calc(var(--header-h) + var(--s-7));
+    padding-bottom: var(--section-y);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--blush) 100%);
+  }
+  .contact :global(.threads-bg) {
+    z-index: -2;
+  }
+  .contact :global(.contact__arch) {
+    position: absolute;
+    z-index: -1;
+    width: clamp(240px, 32vw, 520px);
+    right: -6%;
+    bottom: 4%;
+  }
+  .contact__grid {
+    display: grid;
+    gap: var(--s-8);
+  }
+  .contact h1 {
+    max-width: 14ch;
+  }
+  .contact__lead {
+    margin-top: var(--s-5);
+    max-width: 52ch;
+    font-size: var(--fs-lg);
+  }
+  .contact__form {
+    margin-top: var(--s-7);
+    padding: clamp(var(--s-5), 4vw, var(--s-7));
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-1);
+  }
+  .contact__side {
+    display: grid;
+    gap: var(--s-6);
+    align-content: start;
+  }
+  .contact__portrait {
+    width: min(100%, 340px);
+  }
+  .contact__links {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .contact__links li {
+    display: grid;
+    gap: var(--s-1);
+  }
+  .contact__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-head);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  @media (min-width: 1024px) {
+    .contact__grid {
+      grid-template-columns: 7fr 4fr;
+      gap: var(--s-9);
+      align-items: start;
+    }
+    .contact__side {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-7));
+      margin-top: var(--s-9);
+    }
+  }
+</style>

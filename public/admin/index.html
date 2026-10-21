@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ======================================================
+    LWS CUSTOM DECAP LOGIN PAGE — TEMPLATE
+    CUSTOMIZE: Change <title> to "Site Admin — [Client Name]"
+    That's it.
+  ====================================================== -->
+
+  <title>Site Admin: Dr. Roz Cohen</title>
+
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #ebebeb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    /* ── Login Screen ── */
+    #lws-login {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      text-align: center;
+    }
+
+    #lws-login .logo {
+      width: 75%;
+    
+      height: auto;
+      display: block;
+    }
+
+    #lws-login .login-btn {
+      background: #3d3d3d;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 11px 28px;
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    #lws-login .login-btn:hover {
+      background: #0099CC;
+    }
+
+    /* ── Footer Badge ── */
+    #lws-badge {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #lws-badge a {
+      display: block;
+      line-height: 0;
+    }
+
+    #lws-badge img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transition: opacity 0.2s;
+      opacity: 0.85;
+    }
+
+    #lws-badge img:hover {
+      opacity: 1;
+    }
+
+    /* ── CMS Loading State ── */
+    #lws-loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    #lws-loading .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #ccc;
+      border-top-color: #0099CC;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="lws-login">
+    <img
+      class="logo"
+      src="https://livewebstudios.com/hlink/logofaceFINAL.png"
+      alt="Live Web Studios — Est. 2004"
+    />
+
+    <button class="login-btn" id="login-trigger">
+      Login with Netlify Identity
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div id="lws-loading">
+    <div class="spinner"></div>
+    <span>Loading CMS…</span>
+  </div>
+
+  <!-- Verified & Secured Badge -->
+  <div id="lws-badge">
+    <a href="https://livewebstudios.com" target="_blank" rel="noopener">
+      <img
+        src="https://livewebstudios.com/hlink/verifiedsecured.jpg"
+        alt="Verified &amp; Secured by Live Web Studios"
+      />
+    </a>
+  </div>
+
+  <script>
+    var loginScreen   = document.getElementById('lws-login');
+    var loadingScreen = document.getElementById('lws-loading');
+
+    function loadCMS() {
+      loginScreen.style.display   = 'none';
+      loadingScreen.style.display = 'flex';
+      var script = document.createElement('script');
+      script.src = 'https://unpkg.com/decap-cms@3.1.2/dist/decap-cms.js';
+      document.head.appendChild(script);
+    }
+
+    window.netlifyIdentity.on('init', function(user) {
+      if (user) { loadCMS(); }
+    });
+
+    window.netlifyIdentity.on('login', function() {
+      loadCMS();
+    });
+
+    document.getElementById('login-trigger').addEventListener('click', function() {
+      window.netlifyIdentity.open('login');
+    });
+  </script>
+
+</body>
+</html>

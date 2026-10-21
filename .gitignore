@@ -1,0 +1,27 @@
+# build output
+dist/
+# generated types
+.astro/
+# dependencies
+node_modules/
+# logs
+*.log
+npm-debug.log*
+# environment variables
+.env
+.env.production
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+desktop.ini
+Thumbs.db
+ehthumbs.db
+$RECYCLE.BIN/
+# editor / tools
+.idea/
+.claude/
+# raw asset downloads (kept on disk, not committed)
+images/raw/
+# QA artifacts
+qa/

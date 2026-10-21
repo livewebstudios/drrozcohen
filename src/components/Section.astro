@@ -1,0 +1,39 @@
+---
+export interface Props {
+  id?: string;
+  tone?: 'paper' | 'blush' | 'dark';
+  labelledby?: string;
+  class?: string;
+  /** Remove the default vertical padding. */
+  flush?: boolean;
+}
+const { id, tone = 'paper', labelledby, class: cls = '', flush = false } = Astro.props;
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={['section', `section--${tone}`, tone === 'dark' && 'on-dark', flush && 'section--flush', cls]}
+>
+  <slot />
+</section>
+
+<style is:global>
+  .section {
+    position: relative;
+    padding-block: var(--section-y);
+    isolation: isolate;
+  }
+  .section--flush {
+    padding-block: 0;
+  }
+  .section--blush {
+    background: var(--blush);
+  }
+  .section--dark {
+    background: var(--plum-deep);
+  }
+  .section > .threads-bg {
+    z-index: -1;
+  }
+</style>

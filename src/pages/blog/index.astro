@@ -1,0 +1,21 @@
+---
+import BlogListing from '../../components/BlogListing.astro';
+import { getPosts, PAGE_SIZE } from '../../lib/blog';
+import { ogPath } from '../../lib/og-path';
+import { hero, meta } from '../../data/pages/blog';
+
+const all = await getPosts();
+const totalPages = Math.ceil(all.length / PAGE_SIZE);
+---
+
+<BlogListing
+  posts={all.slice(0, PAGE_SIZE)}
+  page={1}
+  {totalPages}
+  base="/blog/"
+  title={hero.title}
+  intro={hero.intro}
+  metaTitle={meta.title}
+  metaDescription={meta.description}
+  ogImage={ogPath('blog')}
+/>

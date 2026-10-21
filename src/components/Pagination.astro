@@ -1,0 +1,102 @@
+---
+export interface Props {
+  current: number;
+  total: number;
+  /** Builds the URL for page n (1-based). */
+  base: string;
+}
+const { current, total, base } = Astro.props;
+const href = (n: number) => (n === 1 ? base : `${base}page/${n}/`);
+const pages = Array.from({ length: total }, (_, i) => i + 1);
+---
+
+{
+  total > 1 && (
+    <nav class="pager" aria-label="Blog pages">
+      {current > 1 ? (
+        <a class="pager__step" href={href(current - 1)} rel="prev">NEWER POSTS</a>
+      ) : (
+        <span class="pager__step is-disabled" aria-hidden="true">NEWER POSTS</span>
+      )}
+      <ol class="pager__nums" role="list">
+        {pages.map((n) => (
+          <li>
+            <a class="pager__num" href={href(n)} aria-current={n === current ? 'page' : undefined} aria-label={`Page ${n}`}>
+              {n}
+            </a>
+          </li>
+        ))}
+      </ol>
+      {current < total ? (
+        <a class="pager__step" href={href(current + 1)} rel="next">OLDER POSTS</a>
+      ) : (
+        <span class="pager__step is-disabled" aria-hidden="true">OLDER POSTS</span>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    margin-top: var(--s-8);
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--line);
+  }
+  .pager__step {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: var(--track-eyebrow);
+    text-decoration: none;
+    color: var(--plum);
+    padding: var(--s-3) 0;
+  }
+  .pager__step:hover {
+    text-decoration: underline;
+  }
+  .pager__step.is-disabled {
+    color: var(--slate);
+    text-decoration: line-through;
+    text-decoration-color: var(--line-strong);
+  }
+  .pager__nums {
+    display: flex;
+    gap: var(--s-2);
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+  .pager__num {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line-strong);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-sm);
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .pager__num:hover {
+    border-color: var(--plum);
+    color: var(--plum);
+  }
+  .pager__num[aria-current='page'] {
+    background: var(--plum);
+    border-color: var(--plum);
+    color: var(--on-dark);
+  }
+  @media (min-width: 640px) {
+    .pager__nums {
+      order: 0;
+      width: auto;
+    }
+  }
+</style>

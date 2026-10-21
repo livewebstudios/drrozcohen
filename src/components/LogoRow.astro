@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import type { Logo } from '../data/site';
+
+export interface Props {
+  label: string;
+  logos: Logo[];
+  id: string;
+  class?: string;
+}
+const { label, logos, id, class: cls = '' } = Astro.props;
+---
+
+<div class:list={['logo-row', cls]}>
+  <p class="eyebrow logo-row__label" id={id}>{label}</p>
+  <ul class="logo-row__list" role="list" aria-labelledby={id}>
+    {
+      logos.map((l) => (
+        <li class="logo-row__item">
+          <Image src={l.src} alt={l.alt} height={Math.min(l.src.height, 72)} layout="fixed" class="logo-row__img" />
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .logo-row {
+    display: grid;
+    gap: var(--s-5);
+    align-items: center;
+  }
+  .logo-row__label {
+    color: var(--slate);
+  }
+  .logo-row__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-6) clamp(var(--s-6), 4vw, var(--s-8));
+  }
+  .logo-row__item {
+    display: flex;
+    align-items: center;
+  }
+  .logo-row :global(.logo-row__img) {
+    width: auto;
+    max-height: 44px;
+    max-width: 150px;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.7;
+    transition:
+      filter var(--d-slow) var(--ease-out),
+      opacity var(--d-slow) var(--ease-out);
+  }
+  .logo-row__item:hover :global(.logo-row__img) {
+    filter: none;
+    opacity: 1;
+  }
+  @media (min-width: 1024px) {
+    .logo-row {
+      grid-template-columns: auto 1fr;
+      gap: var(--s-7);
+    }
+    .logo-row__list {
+      justify-content: space-between;
+    }
+    .logo-row :global(.logo-row__img) {
+      max-height: 52px;
+      max-width: 170px;
+    }
+  }
+</style>

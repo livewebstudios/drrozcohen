@@ -1,0 +1,444 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Picture, getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../../../layouts/Base.astro';
+import ArchFrame from '../../../../components/ArchFrame.astro';
+import PostCard from '../../../../components/PostCard.astro';
+import PreloadImage from '../../../../components/PreloadImage.astro';
+import { getPosts, postParams, postPath, categoryPath, formatDate, isoDate, relatedPosts, getExcerpt, type Post } from '../../../../lib/blog';
+import { postOgPath } from '../../../../lib/og-path';
+import { breadcrumbs, ID, abs } from '../../../../lib/schema';
+import { SITE } from '../../../../data/site';
+import authorImg from '../../../../assets/images/photos/roscohen_86.jpg';
+
+export const getStaticPaths = (async () => {
+  const all = await getPosts();
+  return all.map((post, i) => ({
+    params: postParams(post),
+    props: { post, newer: all[i - 1] as Post | undefined, older: all[i + 1] as Post | undefined, related: relatedPosts(post, all) },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post, newer, older, related } = Astro.props;
+const { Content } = await render(post);
+const { title, date, categories, featuredImage, featuredAlt } = post.data;
+const excerpt = getExcerpt(post);
+const path = postPath(post);
+const shownCats = categories.filter((c) => c !== 'Uncategorized');
+
+// Meta description: the post excerpt trimmed to 158 characters on a word boundary.
+// Meta is authored metadata, so it follows the LWS dash ban (the body keeps Roz's punctuation).
+const base = (excerpt.replace(/…$/, '') || title).replace(/\s*[\u2014\u2013]\s*/g, ', ').replace(/([.!?”"]), /g, '$1 ');
+let description = base.length > 155 ? base.slice(0, 154).replace(/\s+\S*$/, '') + '…' : base;
+if (description.length < 140 && !description.includes(title)) description = `${title}. ${description}`.slice(0, 155).replace(/\s+\S*$/, '');
+
+// Landscape heroes run wide; portrait and square images (often LinkedIn graphics with text)
+// sit uncropped at a narrower width.
+const tall = !!featuredImage && featuredImage.height / featuredImage.width >= 0.9;
+const HERO_WIDTHS = tall ? [400, 640, 800, 1040] : [480, 720, 1080, 1440];
+const HERO_QUALITY = 55;
+const HERO_SIZES = tall ? '(min-width: 768px) 560px, 84vw' : '(min-width: 1240px) 1100px, 92vw';
+const ogImg = featuredImage ? await getImage({ src: featuredImage, format: 'jpg', width: 1200 }) : null;
+const schema = [
+  {
+    '@type': 'BlogPosting',
+    '@id': abs(`${path}#post`),
+    headline: title,
+    datePublished: isoDate(date),
+    dateModified: isoDate(date),
+    image: ogImg ? abs(ogImg.src) : abs(postOgPath(post.data.slug)),
+    author: { '@id': ID.person },
+    publisher: { '@id': ID.org },
+    mainEntityOfPage: abs(path),
+    articleSection: categories,
+    isPartOf: { '@id': ID.website },
+    ...(excerpt ? { description: excerpt } : {}),
+  },
+  breadcrumbs([
+    { name: 'Home', path: '/' },
+    { name: 'Blog', path: '/blog/' },
+    { name: title, path },
+  ]),
+];
+---
+
+<Base
+  title={`${title} | Dr. Roz Cohen`}
+  {description}
+  {path}
+  ogImage={postOgPath(post.data.slug)}
+  ogAlt={featuredAlt || title}
+  type="article"
+  publishedTime={isoDate(date)}
+  {schema}
+  bodyClass="header-solid page-post"
+>
+  {featuredImage && <PreloadImage slot="head" src={featuredImage} widths={HERO_WIDTHS} sizes={HERO_SIZES} quality={HERO_QUALITY} layout="constrained" />}
+  <div class="progress" aria-hidden="true"><span class="progress__bar" data-progress="#post"></span></div>
+
+  <article id="post" class="post" aria-labelledby="post-title">
+    <header class="post__head container">
+      {
+        shownCats.length > 0 && (
+          <ul class="post__cats" role="list" aria-label="Categories">
+            {shownCats.map((c) => (
+              <li>
+                <a href={categoryPath(c)}>{c}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <h1 id="post-title" class="post__title">{title}</h1>
+      <p class="post__meta">
+        <time datetime={isoDate(date)}>{formatDate(date)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{SITE.shortName}</span>
+      </p>
+    </header>
+
+    {
+      featuredImage && (
+        <div class:list={['post__hero container', tall && 'post__hero--tall']}>
+          <Picture
+            src={featuredImage}
+            alt={featuredAlt}
+            formats={['avif', 'webp']}
+            fallbackFormat="jpg"
+            quality={HERO_QUALITY}
+            widths={HERO_WIDTHS}
+            sizes={HERO_SIZES}
+            priority
+            class="post__hero-img"
+          />
+        </div>
+      )
+    }
+
+    <div class="post__body container">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    <footer class="post__foot container">
+      <section class="author" aria-labelledby="author-name">
+        <div class="author__photo">
+          <ArchFrame src={authorImg} alt="Dr. Roz Cohen" shape="small" sizes="120px" widths={[160, 240, 320]} focus="50 30" />
+        </div>
+        <div class="author__body">
+          <p class="author__name" id="author-name">{SITE.shortName}</p>
+          <p class="author__role">Founder of Socius Strategies.</p>
+          <a class="btn btn--outline author__btn" href={SITE.linkedin} target="_blank" rel="noopener">
+            FOLLOW ON LINKEDIN<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        </div>
+      </section>
+
+      {
+        (newer || older) && (
+          <nav class="adjacent" aria-label="More posts">
+            {newer ? (
+              <a class="adjacent__link adjacent__link--newer" href={postPath(newer)} rel="prev">
+                <span class="eyebrow">Newer</span>
+                <span class="adjacent__title">{newer.data.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {older && (
+              <a class="adjacent__link adjacent__link--older" href={postPath(older)} rel="next">
+                <span class="eyebrow">Older</span>
+                <span class="adjacent__title">{older.data.title}</span>
+              </a>
+            )}
+          </nav>
+        )
+      }
+    </footer>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="related" aria-labelledby="related-title">
+        <div class="container">
+          <h2 id="related-title" class="related__title">Related posts</h2>
+          <div class="related__grid" data-reveal-group>
+            {related.map((p) => (
+              <PostCard post={p} headingLevel="h3" />
+            ))}
+          </div>
+          <p class="related__back">
+            <a class="btn btn--solid" href="/blog/">BACK TO THE BLOG</a>
+          </p>
+        </div>
+      </section>
+    )
+  }
+  {
+    related.length === 0 && (
+      <p class="container related__back related__back--solo">
+        <a class="btn btn--solid" href="/blog/">BACK TO THE BLOG</a>
+      </p>
+    )
+  }
+</Base>
+
+<style>
+  .progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: var(--z-progress);
+    height: 2px;
+    pointer-events: none;
+  }
+  .progress__bar {
+    display: block;
+    height: 100%;
+    background: var(--plum);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+  .post {
+    padding-top: calc(var(--header-h) + var(--s-8));
+  }
+  .post__head {
+    max-width: calc(var(--container-narrow) + var(--gutter) * 2);
+    display: grid;
+    gap: var(--s-4);
+  }
+  .post__cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .post__cats a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--s-1) var(--s-4);
+    border-radius: var(--r-pill);
+    background: var(--blush-deep);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    color: var(--plum-ink);
+  }
+  .post__cats a:hover {
+    background: var(--plum);
+    color: var(--on-dark);
+  }
+  .post__title {
+    font-size: clamp(2rem, 1.3rem + 2.6vw, 3.5rem);
+    line-height: 1.1;
+  }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+  .post__hero {
+    margin-top: var(--s-7);
+    max-width: calc(1100px + var(--gutter) * 2);
+  }
+  .post__hero :global(picture) {
+    display: block;
+  }
+  .post__hero--tall :global(picture) {
+    max-width: min(560px, 84vw);
+    margin-inline: auto;
+  }
+  .post__hero--tall :global(.post__hero-img) {
+    max-height: none;
+    object-fit: contain;
+  }
+  .post__hero :global(.post__hero-img) {
+    width: 100%;
+    max-height: 640px;
+    object-fit: cover;
+    border-radius: var(--r-md);
+  }
+  .post__body {
+    margin-top: var(--s-7);
+  }
+  .post__foot {
+    max-width: calc(var(--container-narrow) + var(--gutter) * 2);
+    margin-top: var(--s-8);
+    display: grid;
+    gap: var(--s-7);
+  }
+  .post__foot > * {
+    min-width: 0;
+  }
+  .author {
+    display: grid;
+    grid-template-columns: clamp(64px, 20vw, 96px) minmax(0, 1fr);
+    gap: var(--s-5);
+    align-items: center;
+    padding: var(--s-6);
+    border-radius: var(--r-lg);
+    background: var(--blush);
+  }
+  .author__name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: var(--fs-lg);
+    color: var(--plum);
+  }
+  .author__role {
+    color: var(--ink-soft);
+    margin-bottom: var(--s-3);
+  }
+  .author__btn {
+    min-height: 2.75rem;
+    padding-inline: var(--s-5);
+    white-space: normal;
+    text-align: center;
+  }
+  @media (max-width: 479px) {
+    .author {
+      padding: var(--s-5);
+      gap: var(--s-4);
+    }
+  }
+  .adjacent {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .adjacent__link {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    text-decoration: none;
+    transition:
+      border-color var(--d-fast) var(--ease-out),
+      transform var(--d-fast) var(--ease-out);
+  }
+  .adjacent__link:hover {
+    border-color: var(--plum);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .adjacent__link:hover {
+      transform: translateY(-2px);
+    }
+  }
+  .adjacent__title {
+    font-family: var(--font-head);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--plum);
+  }
+  .adjacent__link--older {
+    text-align: right;
+  }
+  @media (min-width: 768px) {
+    .adjacent {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .related {
+    margin-top: var(--section-y);
+    padding-block: var(--section-y);
+    background: var(--blush);
+  }
+  .related__title {
+    margin-bottom: var(--s-7);
+    font-size: var(--fs-h3);
+  }
+  .related__grid {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .related__back {
+    margin-top: var(--s-7);
+  }
+  .related__back--solo {
+    margin-block: var(--s-8) var(--section-y);
+  }
+  @media (min-width: 640px) {
+    .related__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .related__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* ---------- Post body typography ---------- */
+  .prose {
+    max-width: var(--measure);
+    margin-inline: auto;
+    font-size: var(--fs-lg);
+    line-height: 1.75;
+  }
+  .prose :global(> * + *) {
+    margin-top: var(--flow);
+  }
+  .prose :global(h2) {
+    margin-top: var(--flow-h2);
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  }
+  .prose :global(h3) {
+    margin-top: var(--flow-h3);
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  }
+  .prose :global(h4),
+  .prose :global(h5) {
+    margin-top: var(--flow-h4);
+    font-size: var(--fs-lg);
+  }
+  .prose :global(h2 + *),
+  .prose :global(h3 + *),
+  .prose :global(h4 + *) {
+    margin-top: var(--flow-after-h);
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: var(--list-indent);
+  }
+  .prose :global(li + li) {
+    margin-top: var(--flow-li);
+  }
+  .prose :global(li::marker) {
+    color: var(--plum);
+    font-weight: 700;
+  }
+  .prose :global(li > p) {
+    margin: 0;
+  }
+  .prose :global(blockquote) {
+    padding-left: var(--s-5);
+    border-left: 2px solid var(--orchid);
+    font-family: var(--font-head);
+    font-weight: 600;
+    color: var(--plum);
+  }
+  .prose :global(img) {
+    border-radius: var(--r-md);
+    margin-inline: auto;
+  }
+  .prose :global(a) {
+    overflow-wrap: anywhere;
+  }
+  .prose :global(.post-hashtags) {
+    margin-top: var(--flow-h2);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-sm);
+    color: var(--slate);
+    letter-spacing: 0.01em;
+  }
+</style>
