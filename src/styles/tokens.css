@@ -78,7 +78,7 @@
   --container: 77.5rem; /* 1240px */
   --container-narrow: 52rem;
   --measure: 68ch;
-  --header-h: 5.25rem;
+  --header-h: 5.75rem;
 
   /* Radius */
   --r-sm: 4px;
@@ -109,6 +109,6 @@
 
 @media (min-width: 1024px) {
   :root {
-    --header-h: 6rem;
+    --header-h: 7rem;
   }
 }
