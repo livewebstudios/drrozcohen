@@ -1,7 +1,6 @@
 ---
 /** Dark plum CTA band at the end of a page: existing page sentence + GET IN TOUCH. */
 import Threads from './Threads.astro';
-import ArchMotif from './ArchMotif.astro';
 import Button from './Button.astro';
 
 export interface Props {
@@ -14,7 +13,6 @@ const { text, id, seed = 5 } = Astro.props;
 
 <section class="cta-band on-dark" aria-labelledby={id}>
   <Threads variant="dark" seed={seed} density={0.6} />
-  <ArchMotif variant="arches" tone="light" drift phase={3} class="cta-band__arch" />
   <div class="container cta-band__inner" data-reveal-group>
     <p class="cta-band__text" id={id} data-reveal>{text}</p>
     <div data-reveal>
@@ -32,13 +30,6 @@ const { text, id, seed = 5 } = Astro.props;
   }
   .cta-band :global(.threads-bg) {
     z-index: -1;
-  }
-  .cta-band :global(.cta-band__arch) {
-    position: absolute;
-    z-index: -1;
-    width: clamp(240px, 36vw, 560px);
-    left: -6%;
-    bottom: -18%;
   }
   .cta-band__inner {
     display: grid;

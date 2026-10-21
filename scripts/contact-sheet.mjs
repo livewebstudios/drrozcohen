@@ -5,7 +5,6 @@ const [w, cw = '300', mh = '2600', out, ...pages] = process.argv.slice(2);
 const cols = [];
 for (const p of pages) {
   const file = `qa/screens/${p}_${w}.png`;
-  const m = await sharp(file).metadata();
   const scaled = await sharp(file).resize({ width: +cw }).toBuffer({ resolveWithObject: true });
   const h = Math.min(scaled.info.height, +mh);
   cols.push(await sharp(scaled.data).extract({ left: 0, top: 0, width: +cw, height: h }).toBuffer());

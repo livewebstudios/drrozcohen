@@ -68,7 +68,7 @@ for (const f of files) {
   }
 }
 for (const [t, where] of titles) if (where.length > 1) problems.push(`duplicate title "${t}" on ${where.join(', ')}`);
-for (const [d, where] of descs) if (where.length > 1) problems.push(`duplicate description on ${where.join(', ')}`);
+for (const where of descs.values()) if (where.length > 1) problems.push(`duplicate description on ${where.join(', ')}`);
 
 // Sitemap
 const sm = fs.readFileSync(path.join(DIST, 'sitemap-0.xml'), 'utf8');

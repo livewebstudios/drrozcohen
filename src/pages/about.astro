@@ -55,13 +55,10 @@ const schema = [
   <PreloadImage slot="head" src={portrait} widths={[400, 640, 720, 960, 1280]} sizes={HERO_SIZES} quality={72} />
   <!-- 1. Hero -->
   <section class="ahero" data-hero aria-labelledby="about-title">
-    <Threads variant="light" seed={41} density={0.45} parallax={0.4} />
-    <div class="ahero__objects" data-parallax="0.7" aria-hidden="true">
-      <ArchMotif variant="arches" tone="slate" drift phase={1} class="ahero__arch" />
-    </div>
+    <Threads variant="light" seed={41} density={0.7} anchor={0.8} parallax={0.4} />
     <div class="container ahero__grid">
       <div class="ahero__text">
-        <p class="ahero__greeting script fade-in">{hero.greeting}</p>
+        <p class="ahero__greeting fade-in">{hero.greeting}</p>
         <h1 id="about-title" class="fade-in">{hero.title}</h1>
         <div class="ahero__lines">
           {hero.lines.map((l) => <p>{l}</p>)}
@@ -181,27 +178,21 @@ const schema = [
   .ahero :global(.threads-bg) {
     z-index: -2;
   }
-  .ahero__objects {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-  }
-  .ahero :global(.ahero__arch) {
-    position: absolute;
-    width: clamp(220px, 30vw, 460px);
-    left: 38%;
-    bottom: 4%;
-  }
   .ahero__grid {
     display: grid;
     gap: var(--s-7);
     align-items: center;
   }
   .ahero__greeting {
-    font-size: clamp(2.5rem, 1.6rem + 3.4vw, 4.75rem);
-    line-height: 1;
-    color: var(--orchid);
-    margin-bottom: var(--s-3);
+    display: inline-block;
+    margin-bottom: var(--s-4);
+    padding-bottom: var(--s-2);
+    border-bottom: 2px solid var(--orchid);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--fs-lg);
+    letter-spacing: var(--track-snug);
+    color: var(--plum);
   }
   .ahero__lines {
     display: grid;

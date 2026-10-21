@@ -39,6 +39,9 @@ const PAIRS = [
   ['error-ink', 'error-bg', 4.5, 'form error banner'],
   ['paper', '#' + overlayOnWhite.slice(1), 4.5, 'blog hero text over plum overlay (worst case: white photo)'],
   ['on-dark-soft', '#' + overlayOnWhite.slice(1), 4.5, 'blog hero eyebrow link over overlay'],
+  ['on-dark', 'plum-ink', 4.5, 'footer text over the gradient midpoint'],
+  ['on-dark-soft', 'plum-ink', 4.5, 'footer headings over the gradient midpoint'],
+  ['orchid-soft', 'plum-ink', 4.5, 'footer link hover over the gradient midpoint'],
   // Interactive states
   ['paper', 'plum-deep', 4.5, 'solid button hover, skip link'],
   ['plum-deep', 'blush', 4.5, 'light button hover on dark bands'],

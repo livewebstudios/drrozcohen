@@ -2,7 +2,6 @@
 import Base from '../layouts/Base.astro';
 import Section from '../components/Section.astro';
 import ArchFrame from '../components/ArchFrame.astro';
-import ArchMotif from '../components/ArchMotif.astro';
 import LogoRow from '../components/LogoRow.astro';
 import Threads from '../components/Threads.astro';
 import CtaBand from '../components/CtaBand.astro';
@@ -44,10 +43,7 @@ const schema = [
   <PreloadImage slot="head" src={stage} widths={[400, 640, 720, 960, 1280]} sizes="(min-width: 1024px) 50vw, 92vw" quality={72} />
   <!-- 1. Hero -->
   <section class="shero" data-hero aria-labelledby="speaking-title">
-    <Threads variant="light" seed={53} density={0.8} parallax={0.4} />
-    <div class="shero__objects" data-parallax="0.7" aria-hidden="true">
-      <ArchMotif variant="arc" tone="orchid" drift phase={2} class="shero__arch" />
-    </div>
+    <Threads variant="light" seed={53} anchor={0.74} parallax={0.4} />
     <div class="container shero__grid">
       <div class="shero__text">
         <h1 id="speaking-title" class="fade-in">{hero.title}</h1>
@@ -152,17 +148,6 @@ const schema = [
   }
   .shero :global(.threads-bg) {
     z-index: -2;
-  }
-  .shero__objects {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-  }
-  .shero :global(.shero__arch) {
-    position: absolute;
-    width: clamp(200px, 26vw, 400px);
-    left: -4%;
-    top: calc(var(--header-h) + 4%);
   }
   .shero__grid {
     display: grid;

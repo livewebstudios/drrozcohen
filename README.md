@@ -22,7 +22,7 @@ Copy `.env.example` to `.env` for local builds, and set the same keys in Netlify
 
 | Key | What it does |
 |---|---|
-| `PUBLIC_FORMSPREE_ID` | The form ID after `https://formspree.io/f/`. Both contact forms (home and Contact page) post here. Placeholder `xxxxxxxx` until the real form exists. |
+| `PUBLIC_FORMSPREE_ID` | Optional. The form ID after `https://formspree.io/f/`. Defaults to the live form `mdearpoj`; both contact forms (home and Contact page) post there. |
 | `PUBLIC_GA4_ID` | GA4 measurement ID (`G-...`). When empty, no analytics script is output at all; the `<!-- GA4: G-XXXXXXXXXX -->` placeholder comment stays in every page head. |
 
 ## How Roz adds a blog post (Decap CMS)
@@ -44,7 +44,7 @@ fields). Do not change it to a caret range.
    `git remote add origin https://github.com/livewebstudios/drrozcohen.git && git push -u origin main`.
 2. In Netlify: Add new site > Import from GitHub > `livewebstudios/drrozcohen`. Build settings come from
    `netlify.toml` (`npm run build`, publish `dist`, Node 24).
-3. Set `PUBLIC_FORMSPREE_ID` and `PUBLIC_GA4_ID` in Netlify environment variables, then redeploy.
+3. Set `PUBLIC_GA4_ID` in Netlify environment variables (Formspree defaults to `mdearpoj`), then redeploy.
 4. Site configuration > Identity: enable it, set registration to **Invite only**, then enable
    **Git Gateway** under Identity > Services.
 5. Identity > Invite users: invite Roz (`roz@drrozcohen.com`). Invite links open the site and forward

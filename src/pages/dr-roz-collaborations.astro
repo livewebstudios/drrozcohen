@@ -64,10 +64,7 @@ const schema = [
   <PreloadImage slot="head" src={heroImg} widths={[400, 640, 720, 960, 1280]} sizes="(min-width: 1024px) 36vw, (min-width: 640px) 70vw, 92vw" quality={72} />
   <!-- 1. Hero -->
   <section class="chero" data-hero aria-labelledby="collab-page-title">
-    <Threads variant="light" seed={61} density={0.7} parallax={0.4} />
-    <div class="chero__objects" data-parallax="0.7" aria-hidden="true">
-      <ArchMotif variant="full" tone="orchid" drift phase={1} class="chero__arch" />
-    </div>
+    <Threads variant="light" seed={61} anchor={0.8} parallax={0.4} />
     <div class="container chero__grid">
       <div class="chero__text">
         <h1 id="collab-page-title" class="fade-in">{hero.title}</h1>
@@ -218,17 +215,6 @@ const schema = [
   }
   .chero :global(.threads-bg) {
     z-index: -2;
-  }
-  .chero__objects {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-  }
-  .chero :global(.chero__arch) {
-    position: absolute;
-    width: clamp(220px, 30vw, 480px);
-    left: -5%;
-    bottom: 2%;
   }
   .chero__grid {
     display: grid;

@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import ArchFrame from '../components/ArchFrame.astro';
-import ArchMotif from '../components/ArchMotif.astro';
 import Threads from '../components/Threads.astro';
 import ContactForm from '../islands/ContactForm';
 import { SITE } from '../data/site';
@@ -30,8 +29,7 @@ const schema = [
 
 <Base title={meta.title} description={meta.description} path="/contact-us/" ogImage={ogPath('contact-us')} schema={schema}>
   <section class="contact" aria-labelledby="contact-title">
-    <Threads variant="light" seed={71} density={0.3} />
-    <ArchMotif variant="arches" tone="slate" drift phase={2} class="contact__arch" />
+    <Threads variant="light" seed={71} density={0.6} anchor={0.85} />
     <div class="container contact__grid">
       <div class="contact__main">
         <h1 id="contact-title" class="fade-in">{hero.title}</h1>
@@ -78,13 +76,6 @@ const schema = [
   }
   .contact :global(.threads-bg) {
     z-index: -2;
-  }
-  .contact :global(.contact__arch) {
-    position: absolute;
-    z-index: -1;
-    width: clamp(240px, 32vw, 520px);
-    right: -6%;
-    bottom: 4%;
   }
   .contact__grid {
     display: grid;

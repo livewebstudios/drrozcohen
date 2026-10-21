@@ -66,11 +66,7 @@ const schema = [
 
   <!-- 1. Hero -->
   <section class="hero" data-hero aria-labelledby="home-title">
-    <Threads variant="light" seed={11} parallax={0.4} />
-    <div class="hero__objects" data-parallax="0.7" aria-hidden="true">
-      <ArchMotif variant="full" tone="orchid" drift phase={0} class="hero__arch hero__arch--a" />
-      <ArchMotif variant="arc" tone="slate" drift phase={2} class="hero__arch hero__arch--b" />
-    </div>
+    <Threads variant="light" seed={11} anchor={0.76} parallax={0.4} />
     <div class="container hero__grid">
       <div class="hero__text">
         <p class="eyebrow hero__eyebrow">{hero.eyebrow}</p>
@@ -153,7 +149,6 @@ const schema = [
   <!-- 5. Quote band -->
   <section class="quote on-dark" aria-label="Quote">
     <Threads variant="dark" seed={37} density={0.7} />
-    <ArchMotif variant="arches" tone="light" drift phase={1} class="quote__arch" />
     <div class="container container--narrow">
       <figure class="quote__figure">
         <blockquote class="quote__text">
@@ -233,24 +228,6 @@ const schema = [
   }
   .hero :global(.threads-bg) {
     z-index: -2;
-  }
-  .hero__objects {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-  }
-  .hero :global(.hero__arch--a) {
-    position: absolute;
-    width: clamp(220px, 34vw, 520px);
-    left: -6%;
-    bottom: 6%;
-  }
-  .hero :global(.hero__arch--b) {
-    position: absolute;
-    width: clamp(160px, 22vw, 340px);
-    right: 4%;
-    top: calc(var(--header-h) + 2%);
   }
   .hero__grid {
     display: grid;
@@ -422,13 +399,6 @@ const schema = [
   }
   .quote :global(.threads-bg) {
     z-index: -1;
-  }
-  .quote :global(.quote__arch) {
-    position: absolute;
-    z-index: -1;
-    width: clamp(260px, 40vw, 620px);
-    right: -8%;
-    bottom: -10%;
   }
   .quote__figure {
     text-align: center;
